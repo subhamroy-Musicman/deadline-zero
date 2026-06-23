@@ -1,5 +1,5 @@
 {
-  "name": "proacta",
+  "name": "deadline-zero",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,9 +9,23 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/genai": "^2.9.0",
+    "@types/canvas-confetti": "^1.9.0",
+    "canvas-confetti": "^1.9.4",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.4.0",
+    "firebase": "^12.15.0",
+    "framer-motion": "^12.41.0",
+    "lucide-react": "^1.21.0",
     "next": "16.2.9",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "react-tsparticles": "^2.12.2",
+    "sonner": "^2.0.7",
+    "tsparticles": "^4.2.1",
+    "tsparticles-engine": "^2.12.0",
+    "tsparticles-slim": "^2.12.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@types/node": "^20",
