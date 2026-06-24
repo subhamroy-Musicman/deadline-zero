@@ -58,7 +58,7 @@ export default function MissionControl() {
             <span className="metric-title">Burnout Risk</span>
             <div className="risk-gauge-container">
               <span className={`metric-value ${isEmergencyMode ? 'critical' : (burnoutRisk > 40 ? 'warning' : 'success')}`}>
-                {burnoutRisk}%
+                {Math.round(burnoutRisk)}%
               </span>
               <span className={`metric-badge ${isEmergencyMode ? 'critical' : (burnoutRisk > 40 ? 'warning' : 'success')}`}>
                 {isEmergencyMode ? 'HIGH' : (burnoutRisk > 40 ? 'MED' : 'LOW')}
@@ -69,7 +69,7 @@ export default function MissionControl() {
 
           <div className="status-metric-box">
             <span className="metric-title">AI Confidence</span>
-            <span className="metric-value" style={{ color: 'var(--accent-secondary)' }}>{successPrediction}%</span>
+            <span className="metric-value" style={{ color: 'var(--accent-secondary)' }}>{Math.round(successPrediction)}%</span>
           </div>
         </div>
 
@@ -78,11 +78,39 @@ export default function MissionControl() {
             <div className="last-action-label">Last Action:</div>
             <div className="last-action-text">{lastAction.description}</div>
             {lastAction.reason && lastAction.reason.length > 0 && (
-              <div className="last-action-reason">{lastAction.reason[0]}</div>
+              <div className="last-action-reason" style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                <strong>Why?</strong>
+                <ul style={{ margin: '0.25rem 0 0 0', paddingLeft: '1.2rem' }}>
+                  {lastAction.reason.map((r, i) => <li key={i}>{r}</li>)}
+                </ul>
+              </div>
             )}
           </div>
         )}
       </div>
+
+
+      <AnimatePresence>
+        {successPrediction < 50 && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="glass-panel"
+            style={{ marginTop: '1rem', border: '1px solid rgba(239, 68, 68, 0.4)', background: 'rgba(239, 68, 68, 0.05)' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+              <AlertTriangle size={18} />
+              ⚠ Predicted Deadline Failure
+            </div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              <strong>Risk: {100 - Math.round(successPrediction)}%</strong><br/>
+              <strong>Reason:</strong> Current workload drastically exceeds available hours.<br/>
+              <strong>Recommended Fix:</strong> Execute AI Recovery Protocol immediately to shed load.
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {pendingTasks.length === 0 && !isEmergencyMode && (
         <div className="mission-control glass-panel success-state" style={{ marginTop: '1rem' }}>
@@ -108,7 +136,7 @@ export default function MissionControl() {
               <div className="emergency-stats">
                 <div className="risk-display">
                   <span className="risk-label">Burnout Risk:</span>
-                  <span className="risk-val critical">{burnoutRisk}%</span>
+                  <span className="risk-val critical">{Math.round(burnoutRisk)}%</span>
                 </div>
                 <div className="risk-causes">
                   <strong>Causes:</strong>

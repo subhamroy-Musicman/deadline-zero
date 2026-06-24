@@ -37,6 +37,35 @@ export default function Sidebar() {
           <span>Schedule</span>
         </Link>
       </nav>
+      
+      <div style={{ padding: '0 1rem', marginTop: '1rem' }}>
+        <button 
+          onClick={() => {
+            const { useStore } = require('../store/useStore');
+            useStore.getState().triggerJudgeDemoMode();
+          }}
+          style={{
+            width: '100%',
+            padding: '0.75rem',
+            background: 'linear-gradient(135deg, #ef4444, #b91c1c)',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
+            transition: 'transform 0.2s',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          🚀 Run AI Stress Test
+        </button>
+      </div>
 
       <div className="sidebar-footer">
         <div className="ai-status">

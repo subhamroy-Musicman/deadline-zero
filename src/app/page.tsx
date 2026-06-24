@@ -189,9 +189,18 @@ export default function Home() {
           <div className="task-list">
             <AnimatePresence>
               {sortedTasks.length === 0 && (
-                <div className="empty-tasks glass-card">
-                  <p>No tasks yet. Enter something above to get started!</p>
-                </div>
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="empty-tasks glass-card"
+                  style={{ textAlign: 'center', padding: '3rem 2rem', marginTop: '1rem', border: '1px dashed rgba(var(--accent-primary-rgb, 139, 92, 246), 0.3)' }}
+                >
+                  <div style={{ background: 'rgba(139, 92, 246, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', color: 'var(--accent-primary)' }}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 4.9l2.9 2.9"/><path d="M16.2 16.2l2.9 2.9"/><path d="M4.9 19.1l2.9-2.9"/><path d="M16.2 7.8l2.9-2.9"/></svg>
+                  </div>
+                  <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Inbox Zero Achieved</h3>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '300px', margin: '0 auto' }}>You have no pending tasks! Enter a brain-dump above to let the AI organize your next move.</p>
+                </motion.div>
               )}
               {sortedTasks.map(task => (
                 <TaskCard 

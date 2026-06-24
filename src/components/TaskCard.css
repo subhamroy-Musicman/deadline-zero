@@ -32,6 +32,8 @@
   font-size: 1.1rem;
   color: var(--text-primary);
   margin: 0;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .line-through {
@@ -55,6 +57,8 @@
   font-size: 0.9rem;
   color: var(--text-secondary);
   margin-bottom: 1rem;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .task-meta {

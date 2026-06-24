@@ -123,6 +123,26 @@ export default function TaskCard({ task, onComplete }: TaskCardProps) {
               </div>
               <span>{task.status === 'completed' ? task.subTasks.length : task.subTasks.filter(st => st.completed).length}/{task.subTasks.length} steps</span>
             </div>
+            <div className="subtasks-list" style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {task.subTasks.map(st => (
+                <label key={st.id} className="subtask-item" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.85rem', opacity: st.completed || task.status === 'completed' ? 0.6 : 1 }}>
+                  <input 
+                    type="checkbox" 
+                    checked={st.completed || task.status === 'completed'}
+                    disabled={task.status === 'completed'}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      useStore.getState().toggleSubTask(task.id, st.id);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ accentColor: 'var(--accent-primary)', width: '16px', height: '16px', cursor: 'pointer' }}
+                  />
+                  <span style={{ textDecoration: (st.completed || task.status === 'completed') ? 'line-through' : 'none' }}>
+                    {st.title}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
         )}
         

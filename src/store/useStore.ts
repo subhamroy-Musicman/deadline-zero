@@ -59,6 +59,7 @@ interface AppState {
   setTasks: (tasks: Task[] | ((prev: Task[]) => Task[])) => void;
   addTask: (task: Task) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
+  toggleSubTask: (taskId: string, subTaskId: string) => void;
   recordTaskCompletion: (isHighRisk?: boolean) => void;
   
   setActiveRoadmap: (roadmap: AppState['activeRoadmap']) => void;
@@ -78,6 +79,7 @@ interface AppState {
   calculateMetrics: () => void;
   injectWorkloadTest: () => void;
   resolveBurnout: () => void;
+  triggerJudgeDemoMode: () => void;
 
   // Schedule Actions
   addEvent: (event: ScheduleEvent) => void;
@@ -198,6 +200,20 @@ export const useStore = create<AppState>()(
         tasks: state.tasks.map(t => t.id === id ? { ...t, ...updates } : t)
       })),
       
+      toggleSubTask: (taskId, subTaskId) => set((state) => ({
+        tasks: state.tasks.map(t => {
+          if (t.id === taskId && t.subTasks) {
+            return {
+              ...t,
+              subTasks: t.subTasks.map(st => 
+                st.id === subTaskId ? { ...st, completed: !st.completed } : st
+              )
+            };
+          }
+          return t;
+        })
+      })),
+      
       recordTaskCompletion: (isHighRisk = false) => set((state) => {
         const newState = {
           completedTaskDates: [...state.completedTaskDates, new Date().toISOString()],
@@ -315,20 +331,51 @@ export const useStore = create<AppState>()(
         const existingTasksFiltered = state.tasks.filter(t => !stressIds.includes(t.id));
         const newTasks: Task[] = [
           ...existingTasksFiltered,
-          { id: 'stress1', title: 'Emergency Client Pitch', deadline: new Date(Date.now() + 3600000).toISOString(), urgencyScore: 98, status: 'pending', estimatedMinutes: 180 },
-          { id: 'stress2', title: 'System Outage Root Cause', deadline: new Date(Date.now() + 7200000).toISOString(), urgencyScore: 95, status: 'pending', estimatedMinutes: 120 },
-          { id: 'stress3', title: 'Q3 Financials Draft', deadline: new Date(Date.now() + 86400000).toISOString(), urgencyScore: 85, status: 'pending', estimatedMinutes: 240 },
-          { id: 'stress4', title: 'Board Deck Review', deadline: new Date(Date.now() + 86400000).toISOString(), urgencyScore: 80, status: 'pending', estimatedMinutes: 90 }
+          { id: 'stress1', title: 'Emergency Client Pitch', deadline: new Date(Date.now() + 3600000).toISOString(), urgencyScore: 98, status: 'pending', estimatedMinutes: 180, reasoning: ['Client emailed URGENT request 5 mins ago', 'High revenue impact'] },
+          { id: 'stress2', title: 'System Outage Root Cause', deadline: new Date(Date.now() + 7200000).toISOString(), urgencyScore: 95, status: 'pending', estimatedMinutes: 120, reasoning: ['Production system down', 'Multiple user reports'] },
+          { id: 'stress3', title: 'Q3 Financials Draft', deadline: new Date(Date.now() + 86400000).toISOString(), urgencyScore: 85, status: 'pending', estimatedMinutes: 240, reasoning: ['Due end of week', 'Requires data synthesis'] },
+          { id: 'stress4', title: 'Board Deck Review', deadline: new Date(Date.now() + 86400000).toISOString(), urgencyScore: 80, status: 'pending', estimatedMinutes: 90, reasoning: ['Dependent on Q3 Financials'] }
         ];
         
-        get().logAgentAction('Observe', 'Detected critical workload overload.');
-        get().addAIActionHistory('Detected 10h+ overload within 48h window');
+        get().logAgentAction('Observe', 'Detected critical workload overload: 10+ hours required in next 24h.');
         
         // Trigger calculateMetrics immediately on the new state
         setTimeout(() => get().calculateMetrics(), 100);
         
         return { tasks: newTasks, focusStreak: 0 };
       }),
+      
+      triggerJudgeDemoMode: () => {
+        // Step 1: Inject Chaos
+        get().injectWorkloadTest();
+        
+        // Step 2: Analyze
+        setTimeout(() => {
+          get().logAgentAction('Analyze', 'Workload (10.5h) exceeds available focus time (4h). Predicting 72% chance of deadline failure.');
+        }, 1500);
+        
+        // Step 3: Plan
+        setTimeout(() => {
+          get().logAgentAction('Plan', 'Identifying low-priority tasks for deferral. Synthesizing burnout recovery sequence...');
+        }, 3000);
+        
+        // Step 4: Act (Resolve Burnout automatically)
+        setTimeout(() => {
+          get().logAgentAction('Act', 'Executing recovery protocol. Moving Q3 Financials & Board Deck to next week.');
+          get().resolveBurnout();
+          get().addAIActionHistory('Rescheduled 2 low-priority tasks to next week to prevent failure.', {
+            riskDrop: '95% → 32%',
+            reason: ['3 deadlines within 48h', 'Available focus time: 4h', 'Required work: 10.5h'],
+            confidence: 96
+          });
+          get().calculateMetrics();
+          
+          setTimeout(() => {
+             get().logAgentAction('Reflect', 'Burnout risk stabilized. Predicted deadline failure averted.');
+          }, 1000);
+          
+        }, 5000);
+      },
       
       resolveBurnout: () => set((state) => {
         get().logAgentAction('Plan', 'Rescheduling non-critical tasks to optimal slots.');
