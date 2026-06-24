@@ -14,7 +14,7 @@ import AIInterventionTimeline from '@/components/AIInterventionTimeline';
 import { useStore } from '@/store/useStore';
 import { Task, CoachMessage } from '@/types';
 import './page.css';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -26,7 +26,13 @@ export default function Home() {
     calculateMetrics,
     addTask,
     startFocusSession,
-    setActiveRoadmap 
+    setActiveRoadmap,
+    decisionHistory,
+    deadlinesPrevented,
+    hoursSaved,
+    burnoutRisk,
+    aiDecisionsExecuted,
+    triggerJudgeDemoMode
   } = useStore();
   
   useEffect(() => {
@@ -44,7 +50,7 @@ export default function Home() {
     { 
       id: 'm2', 
       type: 'suggestion', 
-      text: 'Today&apos;s Recommendation:\nComplete Hackathon Project.\n\nReason: Highest deadline risk.', 
+      text: "Today's Recommendation:\nComplete Hackathon Project.\n\nReason: Highest deadline risk.", 
       timestamp: new Date().toISOString() 
     },
     { 
@@ -161,19 +167,74 @@ export default function Home() {
     return "Good evening";
   };
 
+  const handleBrainDump = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const textarea = document.querySelector('textarea');
+    if (textarea) textarea.focus();
+  };
+
+  const handleImportWorkload = () => {
+    setIsProcessingTask(true);
+    setTimeout(() => {
+      useStore.getState().addTask({
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 7),
+        title: 'Finalize Pitch Deck',
+        deadline: new Date(Date.now() + 86400000).toISOString(),
+        urgencyScore: 85,
+        status: 'pending',
+        estimatedMinutes: 120,
+        confidenceScore: 90,
+        reasoning: ["Imported from Google Calendar", "High priority client meeting"]
+      });
+      useStore.getState().addTask({
+        id: Date.now().toString() + Math.random().toString(36).substring(2, 7) + '2',
+        title: 'Review PRs',
+        deadline: new Date(Date.now() + 86400000 * 2).toISOString(),
+        urgencyScore: 40,
+        status: 'pending',
+        estimatedMinutes: 45,
+        confidenceScore: 95,
+        reasoning: ["Imported from GitHub", "Routine maintenance"]
+      });
+      useStore.getState().calculateMetrics();
+      setIsProcessingTask(false);
+    }, 1500);
+  };
+
   return (
     <>
       <FocusModeOverlay tasks={tasks} onCompleteTask={handleCompleteTask} />
       <div className="page-layout">
         <div className="main-feed">
-          <header className="page-header">
-          <div>
+          <header className="page-header" style={{ marginBottom: '1.5rem' }}>
             <h1 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Never Miss Another Deadline</h1>
             <p className="subtitle" style={{ maxWidth: '600px', fontSize: '1rem', lineHeight: '1.5' }}>
               An autonomous AI agent that plans, prioritizes, and adapts your workload before tasks become overdue.
             </p>
+          </header>
+
+          <div className="executive-banner glass-panel" style={{ marginBottom: '2rem', padding: '1.5rem', borderLeft: '4px solid var(--accent-primary)' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 800, letterSpacing: '1px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>TODAY THE AGENT</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                <span style={{ color: 'var(--success-color)' }}>✓</span> Prevented {deadlinesPrevented} deadline failures
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                <span style={{ color: 'var(--success-color)' }}>✓</span> Saved {hoursSaved} hours
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                <span style={{ color: 'var(--success-color)' }}>✓</span> Reduced burnout risk to {burnoutRisk}%
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                <span style={{ color: 'var(--success-color)' }}>✓</span> Executed {aiDecisionsExecuted} autonomous decisions
+              </div>
+            </div>
+            {decisionHistory.length > 0 && (
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontStyle: 'italic', background: 'var(--bg-glass)', padding: '0.75rem', borderRadius: '4px', border: '1px solid var(--border-glass)' }}>
+                <strong style={{ color: 'var(--text-primary)', fontStyle: 'normal' }}>Last Decision:</strong> &ldquo;{decisionHistory[decisionHistory.length - 1].decision}&rdquo;
+              </div>
+            )}
           </div>
-        </header>
 
         <MissionControl />
         <RoadmapProgressCard />
@@ -193,13 +254,35 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="empty-tasks glass-card"
-                  style={{ textAlign: 'center', padding: '3rem 2rem', marginTop: '1rem', border: '1px dashed rgba(var(--accent-primary-rgb, 139, 92, 246), 0.3)' }}
+                  style={{ padding: '3rem 2rem', marginTop: '1rem' }}
                 >
-                  <div style={{ background: 'rgba(139, 92, 246, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', color: 'var(--accent-primary)' }}>
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 4.9l2.9 2.9"/><path d="M16.2 16.2l2.9 2.9"/><path d="M4.9 19.1l2.9-2.9"/><path d="M16.2 7.8l2.9-2.9"/></svg>
+                  <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <div style={{ background: 'rgba(139, 92, 246, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', color: 'var(--accent-primary)' }}>
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.9 4.9l2.9 2.9"/><path d="M16.2 16.2l2.9 2.9"/><path d="M4.9 19.1l2.9-2.9"/><path d="M16.2 7.8l2.9-2.9"/></svg>
+                    </div>
+                    <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-primary)', fontSize: '1.5rem' }}>Agent on Standby</h3>
+                    <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto' }}>There are currently no tasks in your queue. Initialize the agent by selecting an option below.</p>
                   </div>
-                  <h3 style={{ marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Inbox Zero Achieved</h3>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '300px', margin: '0 auto' }}>You have no pending tasks! Enter a brain-dump above to let the AI organize your next move.</p>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                    <button onClick={triggerJudgeDemoMode} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.5rem', background: 'rgba(139, 92, 246, 0.1)', cursor: 'pointer', border: '1px solid var(--accent-glow)' }}>
+                      <span style={{ fontSize: '1.5rem' }}>🚀</span>
+                      <strong style={{ color: 'var(--text-primary)' }}>Generate Demo Scenario</strong>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Overloaded student simulation</span>
+                    </button>
+                    
+                    <button onClick={handleBrainDump} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.5rem', cursor: 'pointer' }}>
+                      <span style={{ fontSize: '1.5rem' }}>🧠</span>
+                      <strong style={{ color: 'var(--text-primary)' }}>Brain Dump Tasks</strong>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Write freely in the input above</span>
+                    </button>
+                    
+                    <button onClick={handleImportWorkload} className="glass-card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', padding: '1.5rem', cursor: 'pointer' }}>
+                      <span style={{ fontSize: '1.5rem' }}>📥</span>
+                      <strong style={{ color: 'var(--text-primary)' }}>Import Workload</strong>
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Sync from external calendars</span>
+                    </button>
+                  </div>
                 </motion.div>
               )}
               {sortedTasks.map(task => (
@@ -213,11 +296,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div style={{ marginTop: '1.5rem' }}>
-          <AICoach messages={messages} isThinking={isCoachThinking} />
-        </div>
-
-        <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) 340px', gap: '1.5rem' }}>
+        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <AgentActivityFeed />
           <AIInterventionTimeline />
         </div>
@@ -230,6 +309,9 @@ export default function Home() {
           <HabitTracker />
         </div>
       </div>
+      <aside className="right-sidebar" style={{ position: 'sticky', top: '1.5rem', height: 'max-content' }}>
+        <AICoach messages={messages} isThinking={isCoachThinking} />
+      </aside>
     </div>
     </>
   );

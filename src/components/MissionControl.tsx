@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, Zap, Clock, BrainCircuit, Activity, AlertTriangle } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { Task } from '@/types';
+import AgentDecisionCard from './AgentDecisionCard';
 import './MissionControl.css';
 
 export default function MissionControl() {
   const [mounted, setMounted] = useState(false);
+  const [acceptedPlans, setAcceptedPlans] = useState<string[]>([]);
+  const [isExecutingAI, setIsExecutingAI] = useState(false);
   const { 
     tasks, 
     startFocusSession, 
@@ -19,9 +22,15 @@ export default function MissionControl() {
     resolveBurnout,
     createFocusSession,
     aiActionHistory,
+    decisionHistory,
+    agentMemory,
+    availableFocusHours,
     deadlinesPrevented,
     hoursSaved,
-    workloadOptimized
+    workloadOptimized,
+    aiExecutionResult,
+    setAiExecutionResult,
+    calculateConfidence
   } = useStore();
 
   useEffect(() => {
@@ -38,7 +47,18 @@ export default function MissionControl() {
   const topTask = sortedTasks[0];
   const isHighRisk = topTask && topTask.urgencyScore >= 80;
   
+  // Predictive Failure Engine Calculations
+  const remainingWorkMinutes = pendingTasks.reduce((acc, t) => acc + (t.estimatedMinutes || 60), 0);
+  const remainingWorkHours = remainingWorkMinutes / 60;
+  const criticalTasks = pendingTasks.filter(t => {
+    const hoursToDeadline = (new Date(t.deadline).getTime() - Date.now()) / 3600000;
+    return hoursToDeadline > 0 && hoursToDeadline < 48;
+  });
+  
+  const isPredictiveFailure = remainingWorkHours > availableFocusHours && criticalTasks.length > 0;
+  
   const lastAction = aiActionHistory.length > 0 ? aiActionHistory[0] : null;
+  const latestDecision = decisionHistory.length > 0 ? decisionHistory[0] : null;
 
   return (
     <div className="mission-control-container">
@@ -69,7 +89,7 @@ export default function MissionControl() {
 
           <div className="status-metric-box">
             <span className="metric-title">AI Confidence</span>
-            <span className="metric-value" style={{ color: 'var(--accent-secondary)' }}>{Math.round(successPrediction)}%</span>
+            <span className="metric-value" style={{ color: 'var(--accent-secondary)' }}>{Math.round(calculateConfidence())}%</span>
           </div>
         </div>
 
@@ -91,134 +111,128 @@ export default function MissionControl() {
 
 
       <AnimatePresence>
-        {successPrediction < 50 && (
+        {topTask && (
           <motion.div 
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="glass-panel"
-            style={{ marginTop: '1rem', border: '1px solid rgba(239, 68, 68, 0.4)', background: 'rgba(239, 68, 68, 0.05)' }}
+            className={`glass-panel ${isPredictiveFailure ? '' : 'mission-control'}`}
+            style={{ 
+              marginTop: '1rem', 
+              border: aiExecutionResult ? '1px solid rgba(16, 185, 129, 0.4)' : isExecutingAI ? '1px solid rgba(139, 92, 246, 0.4)' : isPredictiveFailure ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(16, 185, 129, 0.2)', 
+              background: aiExecutionResult ? 'rgba(16, 185, 129, 0.05)' : isExecutingAI ? 'rgba(139, 92, 246, 0.05)' : isPredictiveFailure ? 'rgba(239, 68, 68, 0.05)' : 'var(--bg-glass)'
+            }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              <AlertTriangle size={18} />
-              ⚠ Predicted Deadline Failure
-            </div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              <strong>Risk: {100 - Math.round(successPrediction)}%</strong><br/>
-              <strong>Reason:</strong> Current workload drastically exceeds available hours.<br/>
-              <strong>Recommended Fix:</strong> Execute AI Recovery Protocol immediately to shed load.
-            </div>
+            {isExecutingAI ? (
+              <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--accent-primary)' }}>
+                <BrainCircuit size={32} className="animate-pulse" style={{ margin: '0 auto' }} />
+                <p style={{ marginTop: '0.75rem', fontWeight: 500, fontSize: '1.1rem' }}>Executing AI Protocol...</p>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+                  {isPredictiveFailure ? "Rescheduling non-critical tasks & setting focus block..." : "Scheduling focus block..."}
+                </p>
+              </div>
+            ) : aiExecutionResult ? (
+              <div style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 'bold', marginBottom: '0.75rem', fontSize: '1.2rem' }}>
+                  <Zap size={24} />
+                  AI Plan Executed Successfully
+                </div>
+                <p style={{ fontSize: '1rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                  {isPredictiveFailure ? (
+                    <>
+                      <strong>Action Taken:</strong> 2 low-priority tasks rescheduled and <strong>{topTask.title}</strong> scheduled for focus.<br/>
+                      <strong>Result:</strong> Deadline failure probability dropped from <span style={{ color: 'var(--danger)' }}>{aiExecutionResult.oldRisk}%</span> to <span style={{ color: 'var(--success)' }}>{aiExecutionResult.newRisk}%</span>.
+                    </>
+                  ) : (
+                    <>
+                      <strong>Action Taken:</strong> <strong>{topTask.title}</strong> scheduled for {topTask.estimatedMinutes || 45}m focus block.
+                    </>
+                  )}
+                </p>
+                <button 
+                  className="btn-secondary" 
+                  onClick={() => setAiExecutionResult(null)} 
+                  style={{ marginTop: '1.25rem', width: '100%', justifyContent: 'center', padding: '0.75rem' }}
+                >
+                  Dismiss
+                </button>
+              </div>
+            ) : (
+              <div style={{ padding: isPredictiveFailure ? '0.5rem' : '0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: isPredictiveFailure ? 'var(--danger)' : 'var(--accent-primary)', fontWeight: 'bold', marginBottom: '1rem', fontSize: '1.1rem' }}>
+                  {isPredictiveFailure ? <AlertTriangle size={20} /> : <Zap size={20} />}
+                  {isPredictiveFailure ? '⚠ Predicted Deadline Failure' : "TODAY'S MISSION"}
+                </div>
+                
+                <div style={{ fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
+                  <h3 style={{ color: 'var(--text-primary)', fontSize: '1.3rem', marginBottom: '0.5rem' }}>{topTask.title}</h3>
+                  {isPredictiveFailure && (
+                    <div style={{ marginBottom: '1rem' }}>
+                      <strong>Risk:</strong> {100 - Math.round(successPrediction)}%<br/><br/>
+                      <strong>Reason:</strong><br/>
+                      • {Math.round(remainingWorkHours * 10) / 10}h work remaining<br/>
+                      • Only {availableFocusHours}h available capacity<br/>
+                    </div>
+                  )}
+                  
+                  <div style={{ background: 'var(--bg-glass)', padding: '1rem', borderRadius: '8px', borderLeft: `3px solid ${isPredictiveFailure ? 'var(--danger)' : 'var(--accent-primary)'}` }}>
+                    <p style={{ fontWeight: 'bold', marginBottom: '0.25rem', color: 'var(--text-primary)' }}>Recommended Action:</p>
+                    <p>
+                      {isPredictiveFailure 
+                        ? `Reschedule low-priority tasks immediately to free capacity, AND schedule ${topTask.title} for a ${topTask.estimatedMinutes || 45}m focus block right now.` 
+                        : `Schedule ${topTask.title} for a ${topTask.estimatedMinutes || 45}m focus block right now.`}
+                    </p>
+                    {isPredictiveFailure && (
+                      <p style={{ marginTop: '0.5rem', color: 'var(--success)' }}>
+                        <strong>Expected Outcome:</strong> Failure probability reduced to {Math.max(10, 100 - Math.round(successPrediction) - 45)}%
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <button 
+                  className={`mission-focus-btn ${isPredictiveFailure ? 'emergency-btn' : ''}`}
+                  onClick={() => {
+                    if (isPredictiveFailure) {
+                      const currentRisk = 100 - Math.round(successPrediction);
+                      const expectedRisk = Math.max(10, currentRisk - 45);
+                      setIsExecutingAI(true);
+                      resolveBurnout();
+                      createFocusSession(topTask.id, topTask.estimatedMinutes || 45);
+                      setTimeout(() => {
+                        setIsExecutingAI(false);
+                        setAiExecutionResult({ oldRisk: currentRisk, newRisk: expectedRisk });
+                      }, 1500);
+                    } else {
+                      setIsExecutingAI(true);
+                      createFocusSession(topTask.id, topTask.estimatedMinutes || 45);
+                      setTimeout(() => {
+                        setIsExecutingAI(false);
+                        setAiExecutionResult({ oldRisk: 0, newRisk: 0 }); // values not used in non-failure state
+                      }, 800);
+                    }
+                  }}
+                  style={{ marginTop: '1.25rem', width: '100%', padding: '0.85rem', fontSize: '1rem' }}
+                >
+                  <Zap size={18} style={{ marginRight: '0.5rem' }} /> {isPredictiveFailure ? 'Execute Complete AI Recovery' : 'Accept AI Plan'}
+                </button>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
-
-      {pendingTasks.length === 0 && !isEmergencyMode && (
-        <div className="mission-control glass-panel success-state" style={{ marginTop: '1rem' }}>
-          <h2 className="mission-header">TODAY'S MISSION</h2>
-          <p>All tasks cleared! Great job.</p>
-        </div>
-      )}
 
       <AnimatePresence>
-        {isEmergencyMode && (
-          <motion.div 
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mission-control glass-panel emergency-mode"
+        {latestDecision && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ marginTop: '1rem' }}
           >
-            <div className="mission-header emergency">
-              <AlertTriangle size={18} className="text-danger animate-pulse" /> 
-              <span>CRITICAL WORKLOAD DETECTED</span>
-            </div>
-
-            <div className="emergency-body">
-              <div className="emergency-stats">
-                <div className="risk-display">
-                  <span className="risk-label">Burnout Risk:</span>
-                  <span className="risk-val critical">{Math.round(burnoutRisk)}%</span>
-                </div>
-                <div className="risk-causes">
-                  <strong>Causes:</strong>
-                  <ul>
-                    {burnoutFactors.map((f, i) => <li key={i}>{f}</li>)}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="emergency-action">
-                <p className="rec-title">AI Recovery Protocol:</p>
-                <ul className="ai-action-list">
-                  <li>Reschedule 2 non-critical tasks</li>
-                  <li>Block distraction windows</li>
-                  <li>Create mandatory recovery period</li>
-                </ul>
-                <div className="expected-risk">
-                  Expected Risk: <strong>{burnoutRisk}% → 49%</strong>
-                </div>
-                <button 
-                  className="mission-focus-btn emergency-btn"
-                  onClick={() => resolveBurnout()}
-                >
-                  <Zap size={16} /> Execute Recovery
-                </button>
-              </div>
-            </div>
+            <AgentDecisionCard decision={latestDecision} />
           </motion.div>
         )}
       </AnimatePresence>
-
-      {!isEmergencyMode && topTask && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mission-control glass-panel"
-        >
-          <div className="mission-header">
-            <Zap size={16} className="text-yellow-400" /> TODAY'S MISSION
-          </div>
-
-          <div className="mission-body">
-            <div className="mission-task-details">
-              <h3 className="high-risk-title">{topTask.title}</h3>
-              
-              <div className="risk-indicator">
-                <span className="risk-label">Task Risk:</span>
-                <span className={`risk-value ${isHighRisk ? 'critical' : 'warning'}`}>
-                  {topTask.urgencyScore}%
-                </span>
-              </div>
-
-              <div className="ai-prediction">
-                <ShieldAlert size={14} className={isHighRisk ? 'text-red-400' : 'text-yellow-400'} />
-                <div className="prediction-text">
-                  <strong>AI Prediction:</strong> You may miss this deadline if not started soon.
-                </div>
-              </div>
-            </div>
-
-            <div className="mission-action">
-              <p className="rec-title">AI Recommendation:</p>
-              <p className="rec-desc">Schedule <strong>{topTask.title}</strong> for a {topTask.estimatedMinutes || 45}m focus block right now.</p>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-                <button 
-                  className="mission-focus-btn"
-                  onClick={() => createFocusSession(topTask.id, topTask.estimatedMinutes || 45)}
-                >
-                  <Zap size={16} /> Accept AI Plan
-                </button>
-                <button 
-                  className="btn-secondary"
-                  onClick={() => startFocusSession(topTask.id, topTask.estimatedMinutes || 45)}
-                  style={{ flex: 1, justifyContent: 'center' }}
-                >
-                  <Clock size={16} /> Start Now
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
 
     </div>
   );

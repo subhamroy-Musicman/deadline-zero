@@ -51,34 +51,36 @@ export default function TaskInput({ onSubmit, isLoading }: TaskInputProps) {
           <span className="input-hint">
             {input.length}/500 - Deadline Zero will automatically extract deadlines and prioritize.
           </span>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="submit"
-            className={`submit-btn ${isLoading ? 'loading' : ''}`}
-            disabled={!input.trim() || input.length > 500 || isLoading}
-          >
-            {isLoading ? <span className="loader"></span> : <><span>Plan it</span><Send size={16} /></>}
-          </motion.button>
-          
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            className="roadmap-btn"
-            disabled={!input.trim() || isLoading}
-            onClick={(e) => {
-              e.preventDefault();
-              if (input.trim()) {
-                // In page.tsx, we would intercept this or use a specific callback
-                onSubmit(`[ROADMAP] ${input}`);
-                setInput('');
-              }
-            }}
-          >
-            <span>Goal → Roadmap</span>
-            <Sparkles size={16} />
-          </motion.button>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className={`submit-btn ${isLoading ? 'loading' : ''}`}
+              disabled={!input.trim() || input.length > 500 || isLoading}
+            >
+              {isLoading ? <span className="loader"></span> : <><span>Plan it</span><Send size={16} /></>}
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="button"
+              className="roadmap-btn"
+              disabled={!input.trim() || isLoading}
+              onClick={(e) => {
+                e.preventDefault();
+                if (input.trim()) {
+                  // In page.tsx, we would intercept this or use a specific callback
+                  onSubmit(`[ROADMAP] ${input}`);
+                  setInput('');
+                }
+              }}
+            >
+              <span>Goal → Roadmap</span>
+              <Sparkles size={16} />
+            </motion.button>
+          </div>
         </div>
       </form>
     </div>

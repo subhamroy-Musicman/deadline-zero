@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import './AIInterventionTimeline.css';
 
 export default function AIInterventionTimeline() {
-  const { aiActionHistory } = useStore();
+  const { agentLogs } = useStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -25,52 +25,29 @@ export default function AIInterventionTimeline() {
 
       <div className="timeline-body">
         <AnimatePresence>
-          {aiActionHistory.length === 0 ? (
+          {agentLogs.length === 0 ? (
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="empty-state"
             >
-              No major interventions yet. Your schedule is perfectly optimized.
+              No AI Activity yet. Agent is observing workload.
             </motion.div>
           ) : (
             <div className="timeline-list">
-              {aiActionHistory.map((action, i) => (
+              {agentLogs.map((log, i) => (
                 <motion.div 
-                  key={action.id}
+                  key={log.id}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="timeline-item"
+                  className={`timeline-item stage-${log.stage.toLowerCase()}`}
                 >
                   <div className="timeline-node"></div>
                   <div className="timeline-content">
-                    <div className="timeline-time">{action.time}</div>
-                    <div className="timeline-desc">{action.description}</div>
-                    
-                    {action.reason && action.reason.length > 0 && (
-                      <div className="timeline-reasoning">
-                        <strong className="reason-title">Reason:</strong>
-                        <ul className="reason-list">
-                          {action.reason.map((r, idx) => (
-                            <li key={idx}>• {r}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="timeline-footer">
-                      {action.riskDrop && (
-                        <div className="timeline-impact">
-                          <TrendingDown size={14} /> Risk Dropped: {action.riskDrop}
-                        </div>
-                      )}
-                      {action.confidence && (
-                        <div className="timeline-confidence">
-                          Confidence: {action.confidence}%
-                        </div>
-                      )}
-                    </div>
+                    <div className="timeline-time">{new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                    <div className="timeline-stage-label">{log.stage.toUpperCase()}</div>
+                    <div className="timeline-desc">{log.message}</div>
                   </div>
                 </motion.div>
               ))}

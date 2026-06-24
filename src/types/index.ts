@@ -24,9 +24,25 @@ export interface AgentLog {
 
 export interface AgentMemory {
   preferredWorkHours: { start: number; end: number }; // 0-23 hours
-  focusDurationMin: number;
-  burnoutRiskLevel: 'low' | 'medium' | 'high' | 'critical';
-  historicalPatterns: string[];
+  completionRate: number; // 0-100 percentage of tasks completed on time
+  focusPatterns: string[]; // e.g. ["Completes most work between 8PM-11PM"]
+}
+
+export interface AgentDecision {
+  id: string;
+  timestamp: string;
+  category: "burnout" | "scheduling" | "priority" | "focus" | "conflict" | "prediction";
+  observation: string[];
+  analysis: string[];
+  decision: string;
+  reasoning: string[];
+  expectedOutcome: string;
+  confidence: number;
+  impactScore: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metricsBefore?: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metricsAfter?: Record<string, any>;
 }
 
 export interface SubTask {
@@ -54,4 +70,5 @@ export interface ScheduleEvent {
   createdByAI?: boolean;
   priority?: "low" | "medium" | "high" | "critical";
   isFocusSession?: boolean;
+  hasConflict?: boolean;
 }

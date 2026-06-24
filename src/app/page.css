@@ -1,17 +1,26 @@
 .page-layout {
   display: flex;
-  justify-content: center;
-  max-width: 1200px;
+  justify-content: flex-start;
+  gap: 2.5rem;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0;
 }
 
 .main-feed {
   flex: 1;
-  max-width: 800px;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  max-width: 800px;
+}
+
+.right-sidebar {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex-shrink: 0;
 }
 
 /* Removed old grid layouts */
@@ -43,11 +52,12 @@
 }
 
 .task-count {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-glass);
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-xl);
   font-size: 0.85rem;
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glass);
 }
 
 .empty-tasks {

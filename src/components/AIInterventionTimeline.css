@@ -55,12 +55,26 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--accent-primary);
+  background: var(--text-secondary);
   border: 3px solid var(--bg-card);
   position: relative;
   z-index: 1;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
 }
+
+.stage-observe .timeline-node { background: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
+.stage-observe .timeline-stage-label { color: #3b82f6; }
+
+.stage-analyze .timeline-node { background: #a855f7; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+.stage-analyze .timeline-stage-label { color: #a855f7; }
+
+.stage-plan .timeline-node { background: #eab308; box-shadow: 0 0 10px rgba(234, 179, 8, 0.4); }
+.stage-plan .timeline-stage-label { color: #eab308; }
+
+.stage-act .timeline-node { background: #ef4444; box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+.stage-act .timeline-stage-label { color: #ef4444; }
+
+.stage-reflect .timeline-node { background: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+.stage-reflect .timeline-stage-label { color: #22c55e; }
 
 .timeline-content {
   flex: 1;
@@ -70,7 +84,14 @@
   font-size: 0.75rem;
   color: var(--text-secondary);
   font-family: monospace;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.15rem;
+}
+
+.timeline-stage-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 0.4rem;
 }
 
 .timeline-desc {

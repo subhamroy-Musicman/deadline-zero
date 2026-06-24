@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Lightbulb, AlertCircle, TrendingUp, HelpCircle, Clock } from 'lucide-react';
+import { Bot, Lightbulb, AlertCircle, TrendingUp, HelpCircle, Clock, BrainCircuit } from 'lucide-react';
 import { CoachMessage } from '../types';
 import { useStore } from '../store/useStore';
 import './AICoach.css';
@@ -45,6 +45,15 @@ export default function AICoach({ messages, isThinking }: AICoachProps) {
           <h3>Deadline Zero</h3>
           <span className="coach-status">Active Context Monitoring</span>
         </div>
+      </div>
+
+      <div className="agent-memory-box" style={{ background: 'rgba(139, 92, 246, 0.1)', padding: '0.75rem', margin: '0 1rem', borderRadius: '6px', borderLeft: '3px solid var(--accent-primary)', fontSize: '0.85rem' }}>
+        <strong style={{ color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
+          <BrainCircuit size={14} /> AI Learned:
+        </strong>
+        <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+          {useStore.getState().agentMemory?.focusPatterns?.[0] || "You complete most work between 8PM–11PM."}
+        </p>
       </div>
 
       <div className="coach-messages">

@@ -1,9 +1,8 @@
 .ai-coach-panel {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 3rem);
-  position: sticky;
-  top: 1.5rem;
+  max-height: calc(100vh - 250px);
+  padding: 1.5rem;
 }
 
 .coach-header {

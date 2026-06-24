@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { Flame, Trophy, Activity, ShieldCheck, Zap } from 'lucide-react';
-import { format, subDays, isSameDay, startOfDay } from 'date-fns';
+import { format, subDays, isSameDay, startOfDay, startOfWeek, addDays } from 'date-fns';
 import './AnalyticsPanel.css';
 
 export default function AnalyticsPanel() {
-  const { completedTaskDates, deadlinesPrevented, hoursSaved, workloadOptimized, aiDecisionsExecuted } = useStore();
+  const { completedTaskDates, deadlinesPrevented, hoursSaved, workloadOptimized, aiDecisionsExecuted, successPrediction, burnoutRisk } = useStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -53,8 +53,12 @@ export default function AnalyticsPanel() {
     }
   }
 
-  // 3. Weekly Heatmap (Last 7 days)
-  const last7Days = Array.from({ length: 7 }).map((_, i) => subDays(new Date(), 6 - i));
+  // Calculate Dynamic Focus Score instead of hardcoded 82
+  const focusScore = Math.max(0, Math.min(100, Math.round((successPrediction * 0.6) + ((100 - burnoutRisk) * 0.4) + (streak * 2))));
+
+  // 3. Weekly Heatmap (Current week starting Sunday)
+  const currentSunday = startOfWeek(new Date(), { weekStartsOn: 0 });
+  const weeklyDays = Array.from({ length: 7 }).map((_, i) => addDays(currentSunday, i));
 
   return (
     <div className="analytics-panel glass-panel">
@@ -72,7 +76,7 @@ export default function AnalyticsPanel() {
             </div>
             <div className="stat-info">
               <h4 style={{ fontSize: '0.75rem', margin: 0 }}>Focus Score</h4>
-              <p className="streak-value" style={{ fontSize: '1.25rem', margin: 0 }}>82</p>
+              <p className="streak-value" style={{ fontSize: '1.25rem', margin: 0 }}>{focusScore}</p>
             </div>
           </div>
           <div className="stat-card" style={{ flex: 1, padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -87,43 +91,43 @@ export default function AnalyticsPanel() {
         </div>
 
         {/* Massive AI Impact Section */}
-        <div className="ai-impact-section glass-panel" style={{ background: 'linear-gradient(145deg, rgba(30,20,40,0.6), rgba(20,20,20,0.8))', border: '1px solid rgba(var(--accent-secondary-rgb, 168,85,247), 0.3)', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
+        <div className="ai-impact-section glass-panel" style={{ background: 'var(--bg-surface)', border: '1px solid rgba(var(--accent-secondary-rgb, 168,85,247), 0.3)', padding: '1.5rem', borderRadius: 'var(--radius-md)' }}>
           <h3 className="text-gradient" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.5rem', marginBottom: '1.5rem', margin: 0 }}>
             <Zap size={24} /> AI IMPACT
           </h3>
 
           <div className="impact-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div className="impact-metric" style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--success)' }}>
+            <div className="impact-metric" style={{ background: 'var(--bg-glass)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--success)' }}>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--success)', lineHeight: 1 }}>{deadlinesPrevented}</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Deadlines Prevented</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Deadlines Prevented</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                 <div>↳ {Math.max(1, Math.floor(deadlinesPrevented / 2))} tasks auto-rescheduled</div>
                 <div>↳ {Math.max(1, Math.ceil(deadlinesPrevented / 2))} conflicts resolved</div>
               </div>
             </div>
 
-            <div className="impact-metric" style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-primary)' }}>
+            <div className="impact-metric" style={{ background: 'var(--bg-glass)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-primary)' }}>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)', lineHeight: 1 }}>{hoursSaved}</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Hours Saved</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Hours Saved</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                 <div>↳ {Math.max(1, Math.floor(hoursSaved * 0.6))}h focus sessions</div>
                 <div>↳ {Math.max(1, Math.ceil(hoursSaved * 0.4))}h auto-scheduling</div>
               </div>
             </div>
 
-            <div className="impact-metric" style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--warning)' }}>
+            <div className="impact-metric" style={{ background: 'var(--bg-glass)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--warning)' }}>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--warning)', lineHeight: 1 }}>{(workloadOptimized / 60).toFixed(1)}h</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Workload Optimized</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>Workload Optimized</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                 <div>↳ {Math.max(1, Math.floor((workloadOptimized / 60) * 0.7))}h task deferral</div>
                 <div>↳ {Math.max(1, Math.ceil((workloadOptimized / 60) * 0.3))}h buffer time added</div>
               </div>
             </div>
 
-            <div className="impact-metric" style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-secondary)' }}>
+            <div className="impact-metric" style={{ background: 'var(--bg-glass)', padding: '1rem', borderRadius: '8px', borderLeft: '3px solid var(--accent-secondary)' }}>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-secondary)', lineHeight: 1 }}>{aiDecisionsExecuted}</div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>AI Decisions Executed</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-primary)', textTransform: 'uppercase', marginTop: '0.25rem', fontWeight: 600 }}>AI Decisions Executed</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
                 <div>↳ {Math.max(1, Math.floor(aiDecisionsExecuted * 0.8))} autonomous plans</div>
                 <div>↳ {Math.max(1, Math.ceil(aiDecisionsExecuted * 0.2))} recovery protocols</div>
               </div>
@@ -134,7 +138,7 @@ export default function AnalyticsPanel() {
         <div className="stat-card heatmap-card" style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-glass)' }}>
           <h4 style={{ marginBottom: '1rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontSize: '0.85rem', letterSpacing: '1px' }}>Weekly Activity</h4>
           <div className="heatmap-rows" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {last7Days.map((day, i) => {
+            {weeklyDays.map((day, i) => {
               const count = dates.filter(d => isSameDay(d, day)).length;
               const normalizedCount = count === 0 ? 1 : Math.min(count + 1, 5); // 1 to 5 blocks
               

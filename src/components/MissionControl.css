@@ -328,7 +328,7 @@
 .ai-status-hero {
   padding: 1.5rem;
   border-left: 4px solid var(--accent-primary);
-  background: linear-gradient(135deg, rgba(30, 20, 50, 0.4) 0%, rgba(10, 10, 10, 0.6) 100%);
+  background: var(--bg-surface);
   margin-bottom: 0.5rem;
 }
 
@@ -427,7 +427,7 @@
 }
 
 .last-action-panel {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-glass);
   padding: 1rem;
   border-radius: 8px;
   border-left: 2px solid var(--accent-secondary);

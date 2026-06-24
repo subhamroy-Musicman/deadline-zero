@@ -10,6 +10,19 @@ import { Toaster } from "sonner";
 export const metadata: Metadata = {
   title: "Deadline Zero - Your Proactive Productivity Companion",
   description: "An AI-powered productivity companion that proactively assists users in planning, prioritizing, and completing tasks.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Deadline Zero",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#0b0f19",
 };
 
 export default function RootLayout({
@@ -28,7 +41,7 @@ export default function RootLayout({
               (function() {
                 try {
                   var state = localStorage.getItem('deadline-zero-storage');
-                  var theme = 'cyberpunk';
+                  var theme = 'midnight';
                   var mode = 'dark';
                   if (state) {
                     var parsed = JSON.parse(state);

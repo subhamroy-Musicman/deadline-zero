@@ -1,0 +1,22 @@
+{
+  "name": "Deadline Zero",
+  "short_name": "Deadline Zero",
+  "description": "An AI-powered productivity companion that proactively assists users in planning, prioritizing, and completing tasks.",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#0b0f19",
+  "background_color": "#0b0f19",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/"
+}

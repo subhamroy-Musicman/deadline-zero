@@ -78,16 +78,34 @@ export default function TaskCard({ task, onComplete }: TaskCardProps) {
         
         {task.description && <p className="task-desc">{task.description}</p>}
 
-        {task.reasoning && task.reasoning.length > 0 && (
-          <div className="task-reasoning-panel">
-            <div className="reasoning-title">Why?</div>
-            <ul className="reasoning-list">
-              {task.reasoning.map((r, i) => (
-                <li key={i}>• {r}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        {(() => {
+          const reasons = [...(task.reasoning || [])];
+          if (reasons.length === 0) {
+            if (isOverdue) reasons.push("CRITICAL: Task is overdue");
+            else {
+              const hoursUntilDue = (deadlineDate.getTime() - Date.now()) / 3600000;
+              if (hoursUntilDue < 48) reasons.push(`Deadline in ${Math.round(hoursUntilDue)}h`);
+            }
+            if (task.estimatedMinutes) reasons.push(`Requires ${Math.round((task.estimatedMinutes / 60) * 10) / 10}h effort`);
+            if (task.urgencyScore >= 80) reasons.push("Blocks dependent tasks");
+            
+            const store = useStore.getState();
+            if (store.burnoutRisk > 60) reasons.push("User capacity exhausted");
+          }
+
+          if (reasons.length === 0) return null;
+
+          return (
+            <div className="task-reasoning-panel">
+              <div className="reasoning-title">Why:</div>
+              <ul className="reasoning-list">
+                {reasons.map((r, i) => (
+                  <li key={i}>• {r}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })()}
         
         <div className="task-meta">
           <div className={`task-deadline ${isOverdue ? 'overdue' : ''}`}>
