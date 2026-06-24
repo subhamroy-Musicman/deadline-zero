@@ -118,10 +118,10 @@ export default function TaskCard({ task, onComplete }: TaskCardProps) {
               <div className="progress-bar">
                 <div 
                   className="progress-fill" 
-                  style={{ width: `${(task.subTasks.filter(st => st.completed).length / task.subTasks.length) * 100}%` }}
+                  style={{ width: `${task.status === 'completed' ? 100 : (task.subTasks.filter(st => st.completed).length / task.subTasks.length) * 100}%` }}
                 ></div>
               </div>
-              <span>{task.subTasks.filter(st => st.completed).length}/{task.subTasks.length} steps</span>
+              <span>{task.status === 'completed' ? task.subTasks.length : task.subTasks.filter(st => st.completed).length}/{task.subTasks.length} steps</span>
             </div>
           </div>
         )}
