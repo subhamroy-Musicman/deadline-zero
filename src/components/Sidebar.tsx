@@ -38,7 +38,7 @@ export default function Sidebar() {
         </Link>
       </nav>
       
-      <div style={{ padding: '0 1rem', marginTop: '1rem' }}>
+      <div style={{ marginTop: 'auto', marginBottom: '1rem' }}>
         <button 
           onClick={() => {
             const { useStore } = require('../store/useStore');
@@ -47,23 +47,31 @@ export default function Sidebar() {
           style={{
             width: '100%',
             padding: '0.75rem',
-            background: 'linear-gradient(135deg, #ef4444, #b91c1c)',
-            color: 'white',
-            border: 'none',
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: 'var(--danger)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
             borderRadius: '8px',
-            fontWeight: 'bold',
+            fontWeight: '600',
+            fontSize: '0.85rem',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
-            transition: 'transform 0.2s',
+            transition: 'all 0.2s',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+            e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          }}
         >
-          🚀 Run AI Stress Test
+          Run AI Stress Test
         </button>
       </div>
 
