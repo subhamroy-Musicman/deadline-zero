@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { Calendar, CheckSquare, LayoutDashboard, Settings, User } from 'lucide-react';
 import './Sidebar.css';
 import ThemeSelector from './ThemeSelector';
-import DemoControls from './DemoControls';
 
 import Image from 'next/image';
 
@@ -71,7 +70,7 @@ export default function Sidebar() {
             e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
           }}
         >
-          Run AI Stress Test
+          Inject Demo Workload
         </button>
       </div>
 
@@ -93,7 +92,6 @@ export default function Sidebar() {
           {isSettingsOpen && (
             <div className="settings-content glass-panel" style={{ marginTop: '0.5rem', padding: '0.75rem', borderRadius: '8px' }}>
               <ThemeSelector />
-              <DemoControls />
             </div>
           )}
         </div>
