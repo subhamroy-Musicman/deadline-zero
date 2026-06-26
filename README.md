@@ -241,11 +241,7 @@ Deadline Zero doesn't just manage your time; it actively protects it.
 
 ---
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 <div align="center">
   <p>Built with ❤️ using Google AI, Firebase, Next.js and Gemini.</p>
