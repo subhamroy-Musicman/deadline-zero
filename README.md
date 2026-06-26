@@ -237,8 +237,7 @@ Deadline Zero doesn't just manage your time; it actively protects it.
 
 ## 👥 Contributors
 
-- **[Your Name]** - *Lead Developer / AI Engineer* - [@YourGitHub](https://github.com/yourusername)
-- *Add your team members here*
+- **SUBHAM ROY** - *Lead Developer / AI Engineer* - [@subhamroy-Musicman](https://github.com/subhamroy-Musicman)
 
 ---
 
