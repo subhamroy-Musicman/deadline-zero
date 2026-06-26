@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/screenshots/hero-banner.png" alt="Deadline Zero Banner" width="100%" />
+  <img src="public/logo.png" alt="Deadline Zero Banner" width="100%" />
 
   <h1>Deadline Zero</h1>
   <p><strong>An Explainable Autonomous AI Agent that prevents missed deadlines, burnout, and productivity failure before they happen.</strong></p>
