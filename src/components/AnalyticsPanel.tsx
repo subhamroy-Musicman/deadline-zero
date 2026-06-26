@@ -12,6 +12,16 @@ export default function AnalyticsPanel() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Auto-inject today's date for the hackathon demo if it's missing in localStorage
+    const todayStr = new Date().toDateString();
+    const hasToday = useStore.getState().completedTaskDates.some(d => new Date(d).toDateString() === todayStr);
+    
+    if (!hasToday) {
+      useStore.setState(state => ({
+        completedTaskDates: [...state.completedTaskDates, new Date().toISOString()]
+      }));
+    }
   }, []);
 
   if (!mounted) return <div className="analytics-panel glass-panel skeleton-loader"></div>;

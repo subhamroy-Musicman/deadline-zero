@@ -53,7 +53,6 @@ export default function SchedulePage() {
   };
 
   const handleTriggerDemoAlarm = () => {
-    // Add an event that triggers exactly right now
     const now = new Date();
     addEvent({
       id: `demo-alarm-${Date.now()}`,
@@ -62,7 +61,7 @@ export default function SchedulePage() {
       endTime: new Date(now.getTime() + 3600000).toISOString(),
       isAlarmSet: true,
       createdByAI: true,
-      priority: 'critical'
+      priority: 'critical' as any
     });
     logAgentAction('Observe', 'Triggered Demo Alarm instantly.');
   };
@@ -72,7 +71,7 @@ export default function SchedulePage() {
     const blocks: TimeBlock[] = [];
     const dayStart = startOfDay(selectedDay);
 
-    for (let i = 8; i <= 22; i++) {
+    for (let i = 4; i <= 27; i++) {
       const blockStart = addHours(dayStart, i);
       const blockEnd = addHours(dayStart, i + 1);
       
@@ -137,7 +136,12 @@ export default function SchedulePage() {
             {timeline.map((block) => (
               <div key={block.hour} className={`timeline-row ${block.events.length > 0 ? 'has-event' : ''}`}>
                 <div className="time-label">{block.label}</div>
-                <div className="time-slot">
+                <div className="time-slot" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {block.events.length > 1 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--danger)', fontWeight: 'bold' }}>
+                      <AlertTriangle size={12} /> Time Clash: {block.events.length} Overlapping Events
+                    </div>
+                  )}
                   {block.events.length > 0 ? (
                     block.events.map(event => (
                       <div key={event.id} className={`event-card ${getEventClass(event)}`}>
@@ -160,17 +164,21 @@ export default function SchedulePage() {
             <h3>Optimization Report</h3>
             
             <div className="summary-stat">
-              <span className="stat-label">Total Events Today</span>
-              <span className="stat-value text-accent">{events.length}</span>
+              <span className="stat-label">User Events Today</span>
+              <span className="stat-value text-accent">{events.filter(e => !e.createdByAI).length}</span>
             </div>
             <div className="summary-stat">
               <span className="stat-label">AI Focus Blocks</span>
               <span className="stat-value">{events.filter(e => e.isFocusSession).length}</span>
             </div>
+            <div className="summary-stat">
+              <span className="stat-label">Focus Time Score</span>
+              <span className="stat-value text-success">{useStore.getState().focusStreak * 45} mins</span>
+            </div>
             
             <div className="ai-insight-box">
               <BrainCircuit size={20} className="text-accent" />
-              <p>Deadline Zero monitors this timeline. If you add conflicting meetings, it will automatically suggest rescheduling your lower-priority tasks.</p>
+              <p>Deadline Zero automatically tracks timeline clashes and injects deep focus blocks to protect your momentum.</p>
             </div>
           </div>
         </div>

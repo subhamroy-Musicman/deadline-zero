@@ -123,25 +123,25 @@
 .event-card.ai-focus {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
   border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #6ee7b7;
+  color: var(--success);
 }
 
 .event-card.user-event {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  color: #c4b5fd;
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
 }
 
 .event-card.ai-rescheduled {
   background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05));
   border: 1px solid rgba(245, 158, 11, 0.3);
-  color: #fcd34d;
+  color: var(--warning);
 }
 
 .event-card.critical {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
   border: 1px dashed rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
+  color: var(--danger);
   animation: pulse-border 2s infinite;
 }
 
@@ -189,8 +189,8 @@
 
 .ai-insight-box {
   margin-top: 1.5rem;
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-primary);
   border-radius: 8px;
   padding: 1rem;
 }

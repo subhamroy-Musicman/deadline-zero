@@ -123,12 +123,7 @@ export default function TaskCard({ task, onComplete }: TaskCardProps) {
           )}
         </div>
 
-        {task.status !== 'completed' && !isOverdue && (
-          <div className="task-schedule-suggestion">
-            <SparklesIcon />
-            <span>Recommended Work Slot: <strong>Today 7:00 PM - 8:00 PM</strong></span>
-          </div>
-        )}
+
 
         {task.subTasks && task.subTasks.length > 0 && (
           <div className="task-subtasks">

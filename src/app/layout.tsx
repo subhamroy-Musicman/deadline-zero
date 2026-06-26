@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import CommandPalette from "@/components/CommandPalette";
 import AlarmManager from "@/components/AlarmManager";
+import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var state = localStorage.getItem('deadline-zero-storage');
+                  var state = localStorage.getItem('deadline-zero-storage-v2');
                   var theme = 'midnight';
                   var mode = 'dark';
                   if (state) {
@@ -59,6 +60,7 @@ export default function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
+        <ThemeProvider />
         <ParticlesBackground />
         <div className="app-container" suppressHydrationWarning>
           <Sidebar />

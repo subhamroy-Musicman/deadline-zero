@@ -1,19 +1,24 @@
 "use client";
 
-import { useCallback } from "react";
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
-import type { Engine } from "tsparticles-engine";
+import { useState, useEffect } from "react";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
+import type { Engine } from "@tsparticles/engine";
 import { useStore, Theme } from "@/store/useStore";
 
 export default function ParticlesBackground() {
+  const [mounted, setMounted] = useState(false);
   const { theme, reducedMotion } = useStore();
 
-  const particlesInit = useCallback(async (engine: Engine) => {
-    await loadSlim(engine);
+  useEffect(() => {
+    initParticlesEngine(async (engine: Engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setMounted(true);
+    });
   }, []);
 
-  if (reducedMotion) return null;
+  if (!mounted || reducedMotion) return null;
 
   const getThemeConfig = (currentTheme: Theme): any => {
     switch (currentTheme) {
@@ -37,30 +42,37 @@ export default function ParticlesBackground() {
         return {
           particles: {
             number: { value: 60 },
-            color: { value: ["#fce819", "#ff003c"] },
-            shape: { type: "square" },
-            opacity: { value: 0.5 },
-            size: { value: { min: 1, max: 3 } },
+            color: { value: "#f50057" },
+            links: {
+              enable: true,
+              color: "#00e5ff",
+              distance: 120,
+              opacity: 0.4,
+              width: 1
+            },
             move: {
               enable: true,
-              speed: 3,
+              speed: 2,
               direction: "none",
-              outModes: "out"
+              outModes: "bounce"
             }
           }
         };
       case "sunset":
         return {
           particles: {
-            number: { value: 20 },
-            color: { value: ["#ed8936", "#e53e3e"] },
+            number: { value: 50 },
+            color: { value: ["#f43f5e", "#f59e0b", "#ec4899"] },
             shape: { type: "circle" },
-            opacity: { value: 0.2 },
-            size: { value: { min: 10, max: 30 } },
+            opacity: {
+              value: { min: 0.3, max: 0.7 },
+              animation: { enable: true, speed: 0.5, sync: false }
+            },
+            size: { value: { min: 3, max: 8 } },
             move: {
               enable: true,
-              speed: 0.5,
-              direction: "none",
+              speed: 1,
+              direction: "top-right",
               outModes: "out"
             }
           }
@@ -88,35 +100,51 @@ export default function ParticlesBackground() {
           particles: {
             number: { value: 30 },
             color: { value: "#10b981" },
-            shape: { type: "circle" },
-            opacity: { value: 0.4 },
-            size: { value: { min: 2, max: 8 } },
+            shape: { type: "polygon", polygon: { sides: 6 } },
+            opacity: { value: 0.5 },
+            size: { value: { min: 10, max: 30 } },
             move: {
               enable: true,
               speed: 1,
-              direction: "top",
-              outModes: "out",
-              random: true
+              direction: "bottom",
+              outModes: "out"
             }
           }
         };
       case "synthwave":
       case "crimson":
       case "midnight":
-      default:
         return {
           particles: {
-            number: { value: 40 },
+            number: { value: 100 },
             color: { value: "#ffffff" },
-            shape: { type: "circle" },
-            opacity: { value: 0.1 },
+            shape: { type: "star" },
+            opacity: {
+              value: { min: 0.1, max: 0.8 },
+              animation: { enable: true, speed: 1, sync: false }
+            },
             size: { value: { min: 1, max: 3 } },
             move: {
               enable: true,
-              speed: 0.8,
+              speed: 0.5,
               direction: "none",
               outModes: "out"
             }
+          }
+        };
+      default:
+        return {
+          particles: {
+            number: { value: 50 },
+            color: { value: "#6366f1" },
+            links: {
+              enable: true,
+              color: "#a5b4fc",
+              distance: 150,
+              opacity: 0.3,
+              width: 1
+            },
+            move: { enable: true, speed: 1 }
           }
         };
     }
@@ -125,31 +153,40 @@ export default function ParticlesBackground() {
   const config = getThemeConfig(theme);
 
   return (
-    <Particles
-      id="tsparticles"
-      init={particlesInit}
-      options={{
-        fullScreen: { enable: true, zIndex: -1 },
-        background: { color: "transparent" },
-        fpsLimit: 60,
-        interactivity: {
-          events: {
-            onHover: { enable: true, mode: "repulse" },
-          },
-          modes: {
-            repulse: { distance: 100, duration: 0.4 }
-          }
-        },
-        ...config
-      }}
+    <div 
+      className="particles-container" 
       style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
+        zIndex: 0,
         pointerEvents: "none"
       }}
-    />
+    >
+      <Particles
+        id="tsparticles"
+        options={{
+          fullScreen: { enable: false },
+          background: { color: "transparent" },
+          fpsLimit: 60,
+          interactivity: {
+            events: {
+              onHover: { enable: true, mode: "repulse" },
+            },
+            modes: {
+              repulse: { distance: 100, duration: 0.4 }
+            }
+          },
+          ...config.particles
+        }}
+        className="particles-canvas"
+        style={{
+          width: "100%",
+          height: "100%"
+        }}
+      />
+    </div>
   );
 }

@@ -77,7 +77,7 @@
 }
 
 .nav-item.active {
-  background: rgba(139, 92, 246, 0.15);
+  background: var(--accent-glow);
   color: var(--accent-primary);
   border-left: 3px solid var(--accent-primary);
 }
@@ -157,4 +157,50 @@
 .settings-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
+}
+
+/* Responsive Fixes */
+@media (max-width: 1024px) {
+  .sidebar {
+    height: auto;
+    position: relative;
+    top: 0;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    z-index: 10;
+  }
+  
+  .sidebar-header {
+    margin-bottom: 1rem;
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .sidebar-actions {
+    margin-top: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .sidebar-footer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0;
+  }
+  
+  .ai-status, .settings-accordion {
+    margin: 0 !important;
+  }
 }

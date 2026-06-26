@@ -40,28 +40,51 @@ export default function Home() {
     setMounted(true);
     calculateMetrics();
   }, [calculateMetrics]);
-  const [messages, setMessages] = useState<CoachMessage[]>([
-    { 
-      id: 'm1', 
-      type: 'greeting', 
-      text: 'Rescheduled 2 Tasks.\nDetected Burnout Risk.\nActivated Focus Mode.', 
-      timestamp: new Date().toISOString() 
-    },
-    { 
-      id: 'm2', 
-      type: 'suggestion', 
-      text: "Today's Recommendation:\nComplete Hackathon Project.\n\nReason: Highest deadline risk.", 
-      timestamp: new Date().toISOString() 
-    },
-    { 
-      id: 'm3', 
-      type: 'warning', 
-      text: 'High-risk tasks detected. Review now or start a focus session?', 
-      timestamp: new Date().toISOString(),
-      actionable: true,
-      focusTaskId: '1'
+  const [messages, setMessages] = useState<CoachMessage[]>([]);
+
+  useEffect(() => {
+    // Generate functional AI messages based on actual tasks
+    const pendingTasks = tasks.filter(t => t.status !== 'completed');
+    
+    if (pendingTasks.length === 0) {
+      setMessages([]);
+      return;
     }
-  ]);
+
+    const newMessages: CoachMessage[] = [];
+    
+    // Sort by urgency
+    const sortedByUrgency = [...pendingTasks].sort((a, b) => b.urgencyScore - a.urgencyScore);
+    const topTask = sortedByUrgency[0];
+
+    // Today's recommendation
+    newMessages.push({
+      id: 'rec-1',
+      type: 'suggestion',
+      text: `Today's Recommendation:\n${topTask.title}\n\nReason: Highest priority (${topTask.urgencyScore}/100 urgency score).`,
+      timestamp: new Date().toISOString()
+    });
+
+    // High risk warning if any task is overdue or due within 24h
+    const hasHighRisk = pendingTasks.some(t => {
+      const msLeft = new Date(t.deadline).getTime() - Date.now();
+      return msLeft < 86400000; // less than 24 hours
+    });
+
+    if (hasHighRisk) {
+      const riskiestTask = pendingTasks.sort((a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime())[0];
+      newMessages.push({
+        id: 'warn-1',
+        type: 'warning',
+        text: `High-risk deadline detected for: ${riskiestTask.title}. Review now or start a focus session?`,
+        timestamp: new Date().toISOString(),
+        actionable: true,
+        focusTaskId: riskiestTask.id
+      });
+    }
+
+    setMessages(newMessages);
+  }, [tasks]);
   const [isCoachThinking, setIsCoachThinking] = useState(false);
   const [isProcessingTask, setIsProcessingTask] = useState(false);
 
@@ -157,7 +180,7 @@ export default function Home() {
 
   const sortedTasks = [...tasks].sort((a, b) => b.urgencyScore - a.urgencyScore);
 
-  if (!mounted) return <div className="page-layout glass-panel skeleton-loader"></div>;
+  if (!mounted) return <div className="page-layout glass-panel skeleton-loader" suppressHydrationWarning></div>;
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -206,14 +229,26 @@ export default function Home() {
       <FocusModeOverlay tasks={tasks} onCompleteTask={handleCompleteTask} />
       <div className="page-layout">
         <div className="main-feed">
-          <header className="page-header" style={{ marginBottom: '1.5rem' }}>
+          <motion.header 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+            className="page-header" 
+            style={{ marginBottom: '1.5rem' }}
+          >
             <h1 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Never Miss Another Deadline</h1>
             <p className="subtitle" style={{ maxWidth: '600px', fontSize: '1rem', lineHeight: '1.5' }}>
               An autonomous AI agent that plans, prioritizes, and adapts your workload before tasks become overdue.
             </p>
-          </header>
+          </motion.header>
 
-          <div className="executive-banner glass-panel" style={{ marginBottom: '2rem', padding: '1.5rem', borderLeft: '4px solid var(--accent-primary)' }}>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.1 }}
+            className="executive-banner glass-panel" 
+            style={{ marginBottom: '2rem', padding: '1.5rem', borderLeft: '4px solid var(--accent-primary)' }}
+          >
             <div style={{ fontSize: '0.8rem', fontWeight: 800, letterSpacing: '1px', color: 'var(--text-secondary)', marginBottom: '1rem' }}>TODAY THE AGENT</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)', fontWeight: 600 }}>
@@ -234,25 +269,37 @@ export default function Home() {
                 <strong style={{ color: 'var(--text-primary)', fontStyle: 'normal' }}>Last Decision:</strong> &ldquo;{decisionHistory[decisionHistory.length - 1].decision}&rdquo;
               </div>
             )}
-          </div>
+          </motion.div>
 
-        <MissionControl />
-        <RoadmapProgressCard />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.15 }}>
+          <MissionControl />
+        </motion.div>
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.2 }}>
+          <RoadmapProgressCard />
+        </motion.div>
 
-        <TaskInput onSubmit={handleTaskSubmit} isLoading={isProcessingTask} />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 300, damping: 24, delay: 0.25 }}>
+          <TaskInput onSubmit={handleTaskSubmit} isLoading={isProcessingTask} />
+        </motion.div>
 
         <div className="task-list-section">
-          <div className="section-header">
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            className="section-header"
+          >
             <h3>Prioritized For You</h3>
             <span className="task-count">{tasks.filter(t => t.status !== 'completed').length} active</span>
-          </div>
+          </motion.div>
 
           <div className="task-list">
             <AnimatePresence>
               {sortedTasks.length === 0 && (
                 <motion.div 
+                  key="empty-tasks-state"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
                   className="empty-tasks glass-card"
                   style={{ padding: '3rem 2rem', marginTop: '1rem' }}
                 >

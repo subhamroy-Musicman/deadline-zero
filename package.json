@@ -11,6 +11,9 @@
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
     "@google/genai": "^2.9.0",
+    "@tsparticles/engine": "^3.9.1",
+    "@tsparticles/react": "^3.0.0",
+    "@tsparticles/slim": "^3.9.1",
     "@types/canvas-confetti": "^1.9.0",
     "canvas-confetti": "^1.9.4",
     "cmdk": "^1.1.1",
@@ -21,11 +24,7 @@
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-tsparticles": "^2.12.2",
     "sonner": "^2.0.7",
-    "tsparticles": "^4.2.1",
-    "tsparticles-engine": "^2.12.0",
-    "tsparticles-slim": "^2.12.0",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

@@ -4,19 +4,31 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useStore } from '@/store/useStore';
-import { Calendar, CheckSquare, LayoutDashboard, Settings, History, Trash2, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
+import { Calendar, CheckSquare, LayoutDashboard, Settings, History, Trash2, ChevronLeft, ChevronRight, Zap, User } from 'lucide-react';
 import './Sidebar.css';
 import ThemeSelector from './ThemeSelector';
+import { auth } from '@/lib/firebase';
+import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
-  const { isSidebarCollapsed, toggleSidebar, clearDashboard } = useStore();
+  const { isSidebarCollapsed, toggleSidebar, clearDashboard, user, setUser } = useStore();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
-  }, []);
+    if (auth) {
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          setUser({ uid: firebaseUser.uid, displayName: firebaseUser.displayName, photoURL: firebaseUser.photoURL });
+        } else {
+          setUser(null);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [setUser]);
 
   if (!mounted) return <aside className="sidebar glass-panel" style={{ opacity: 0 }}></aside>;
 
@@ -82,6 +94,49 @@ export default function Sidebar() {
       </div>
 
       <div className="sidebar-footer">
+        {user ? (
+          <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+            {user.photoURL ? (
+              <img src={user.photoURL} alt={user.displayName} style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
+            ) : (
+              <User size={28} style={{ padding: '4px', background: 'var(--bg-elevated)', borderRadius: '50%' }} />
+            )}
+            {!isSidebarCollapsed && (
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 'bold', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.displayName || 'User'}</span>
+                <button 
+                  onClick={() => auth && signOut(auth)} 
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.7rem', textAlign: 'left', cursor: 'pointer', padding: 0 }}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <button 
+            className="btn-primary" 
+            style={{ width: '100%', marginBottom: '1rem', padding: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-primary)', border: 'none', color: 'white', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+            onClick={async () => {
+              if (auth) {
+                try {
+                  const provider = new GoogleAuthProvider();
+                  await signInWithPopup(auth, provider);
+                } catch (err) {
+                  console.error("Auth error", err);
+                  alert("Authentication failed. See console for details.");
+                }
+              } else {
+                alert("Firebase is not configured! Please add NEXT_PUBLIC_FIREBASE_API_KEY and other credentials to your .env.local file.");
+              }
+            }}
+            title="Sign in with Google"
+          >
+            <User size={16} />
+            {!isSidebarCollapsed && <span>Sign In</span>}
+          </button>
+        )}
+
         <div className="ai-status" title="AI Coach Active">
           <div className="status-dot"></div>
           {!isSidebarCollapsed && <span>AI Coach Active</span>}

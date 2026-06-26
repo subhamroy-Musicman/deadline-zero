@@ -62,6 +62,13 @@ interface AppState {
   toggleReducedMotion: () => void;
   toggleSidebar: () => void;
   
+  // Auth
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user: any | null;
+  hasSignedInBefore: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setUser: (user: any | null) => void;
+  
   setTasks: (tasks: Task[] | ((prev: Task[]) => Task[])) => void;
   addTask: (task: Task) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
@@ -87,6 +94,8 @@ interface AppState {
   calculateConfidence: () => number;
   calculateImpactScore: (deadlinesPrevented: number, burnoutDrop: number, hoursSaved: number) => string;
   logDecision: (decision: Omit<AgentDecision, 'id' | 'timestamp'>) => void;
+  executeDecision: (id: string) => void;
+  dismissDecision: (id: string) => void;
   injectWorkloadTest: () => void;
   resolveBurnout: () => void;
   triggerJudgeDemoMode: () => void;
@@ -135,6 +144,7 @@ export const useStore = create<AppState>()(
       
       tasks: initialTasks,
       completedTaskDates: [
+        new Date().toISOString(),
         new Date(Date.now() - 86400000 * 1).toISOString(),
         new Date(Date.now() - 86400000 * 1).toISOString(),
         new Date(Date.now() - 86400000 * 2).toISOString(),
@@ -184,7 +194,38 @@ export const useStore = create<AppState>()(
         focusPatterns: []
       },
       
+      user: null,
+      hasSignedInBefore: false,
       aiExecutionResult: null,
+      setUser: (user) => {
+        const state = get();
+        if (user && !state.hasSignedInBefore) {
+          // First time signing in on this browser! Reset everything to 0 to make it user-specific.
+          set({
+             user,
+             hasSignedInBefore: true,
+             tasks: [],
+             completedTaskDates: [],
+             events: [],
+             deadlinesPrevented: 0,
+             hoursSaved: 0,
+             workloadOptimized: 0,
+             aiDecisionsExecuted: 0,
+             historicalCompletionRate: 0,
+             focusStreak: 0,
+             tasksSaved: 0,
+             successPrediction: 0,
+             burnoutRisk: 10,
+             burnoutFactors: [],
+             agentLogs: [{ id: Date.now().toString(), timestamp: new Date().toISOString(), stage: 'Observe', message: `Welcome! AI Coach initialized and ready to adapt to your workflow.` }],
+             decisionHistory: [],
+             aiActionHistory: []
+          });
+          setTimeout(() => get().calculateMetrics(), 100);
+        } else {
+          set({ user });
+        }
+      },
       setAiExecutionResult: (result) => set({ aiExecutionResult: result }),
       
       setTheme: (theme) => set({ theme }),
@@ -296,9 +337,43 @@ export const useStore = create<AppState>()(
           ...state.decisionHistory
         ].slice(0, 100)
       })),
+
+      executeDecision: (id) => {
+        const state = get();
+        const decision = state.decisionHistory.find(d => d.id === id);
+        if (!decision || decision.status !== 'pending') return;
+
+        let newTasks = state.tasks;
+        if (decision.actionPayload?.updatedTasks) {
+          newTasks = decision.actionPayload.updatedTasks;
+        }
+
+        set({
+          tasks: newTasks,
+          decisionHistory: state.decisionHistory.map(d => 
+            d.id === id ? { ...d, status: 'executed' as const } : d
+          ),
+          deadlinesPrevented: state.deadlinesPrevented + (decision.actionPayload?.deadlinesPrevented || 0),
+          hoursSaved: state.hoursSaved + (decision.actionPayload?.hoursSaved || 0),
+          workloadOptimized: state.workloadOptimized + (decision.actionPayload?.hoursSaved ? decision.actionPayload.hoursSaved * 60 : 0),
+          aiDecisionsExecuted: state.aiDecisionsExecuted + 1
+        });
+        
+        get().calculateMetrics();
+      },
+
+      dismissDecision: (id) => set((state) => ({
+        decisionHistory: state.decisionHistory.map(d => 
+          d.id === id ? { ...d, status: 'dismissed' as const } : d
+        )
+      })),
       
       clearDashboard: () => set({
         tasks: [],
+        events: [],
+        activeFocusTaskId: null,
+        focusTimeRemaining: 0,
+        activeRoadmap: null,
         burnoutRisk: 10,
         burnoutFactors: [],
         agentLogs: [],
@@ -499,70 +574,49 @@ export const useStore = create<AppState>()(
         }, 8000);
       },
       
-      resolveBurnout: () => set((state) => {
-        // Reschedule logic: Push EVERYTHING except the absolute critical tasks out by 7 days
+      resolveBurnout: () => {
+        const state = get();
+        // Calculate the real tasks to reschedule
+        const tasksToReschedule = state.tasks.filter(t => t.id === 'internship' || t.id === 'gym' || (!['hackathon', 'dsa', 'ml'].includes(t.id) && t.urgencyScore < 80));
+        
+        if (tasksToReschedule.length === 0) return; // Nothing to do
+
         const updatedTasks = state.tasks.map(t => {
-          if (t.id === 'internship' || t.id === 'gym' || (!['hackathon', 'dsa', 'ml'].includes(t.id) && t.urgencyScore < 80)) {
-            return { ...t, deadline: new Date(Date.now() + 86400000 * 7).toISOString() }; // Push a week out
+          if (tasksToReschedule.find(tr => tr.id === t.id)) {
+            return { ...t, deadline: new Date(Date.now() + 86400000 * 7).toISOString() }; 
           }
           return t;
         });
         
+        const realHoursSaved = tasksToReschedule.reduce((acc, t) => acc + (t.estimatedMinutes || 60) / 60, 0);
+        const realDeadlinesPrevented = tasksToReschedule.filter(t => new Date(t.deadline).getTime() < Date.now() + 86400000 * 2).length;
+        
         const oldRisk = state.burnoutRisk;
+        let newRisk = oldRisk - 15;
+        if (newRisk < 10) newRisk = 10;
         
-        setTimeout(() => {
-          get().calculateMetrics();
-          // Ensure there's a visible drop for the AI intervention even if heavily overloaded
-          let newRisk = get().burnoutRisk;
-          if (oldRisk - newRisk < 15) {
-             newRisk = Math.max(10, oldRisk - 15);
+        const conf = get().calculateConfidence();
+        const impact = get().calculateImpactScore(realDeadlinesPrevented, oldRisk - newRisk, realHoursSaved);
+
+        get().logDecision({
+          category: "burnout",
+          status: "pending",
+          observation: [`${oldRisk}% burnout risk detected`, `High workload clustering`],
+          analysis: [`Capacity exceeded`, `Predictive failure of critical tasks`],
+          decision: `Reschedule ${tasksToReschedule.length} non-critical tasks by 7 days`,
+          reasoning: [`Protect critical deadlines`, `Recover ${realHoursSaved.toFixed(1)} hours of focus time`],
+          expectedOutcome: `Burnout risk reduced from ${oldRisk}% to ${newRisk}%`,
+          confidence: conf,
+          impactScore: `${impact} / 10`,
+          metricsBefore: { burnoutRisk: oldRisk, availableHours: state.availableFocusHours },
+          metricsAfter: { burnoutRisk: newRisk, availableHours: state.availableFocusHours },
+          actionPayload: {
+            updatedTasks,
+            deadlinesPrevented: realDeadlinesPrevented,
+            hoursSaved: realHoursSaved
           }
-          const conf = get().calculateConfidence();
-          const impact = get().calculateImpactScore(2, oldRisk - newRisk, 3);
-          
-          get().logDecision({
-            category: "burnout",
-            observation: [`18h workload detected`, `Multiple deadlines within 48h`],
-            analysis: [`Capacity exceeded`, `Burnout probability elevated`],
-            decision: `Reschedule non-critical tasks & set focus block`,
-            reasoning: [`Protect critical deadlines`, `Reduce cognitive overload`],
-            expectedOutcome: `Burnout risk reduced from ${oldRisk}% to ${newRisk}%`,
-            confidence: conf,
-            impactScore: `${impact} / 10`,
-            metricsBefore: { burnoutRisk: oldRisk, criticalTasks: 3, availableHours: state.availableFocusHours },
-            metricsAfter: { burnoutRisk: newRisk, criticalTasks: 3, availableHours: state.availableFocusHours }
-          });
-          
-          get().addAIActionHistory('Rescheduled non-critical tasks', {
-            reason: [
-              `Overload detected: ${oldRisk}% burnout risk`,
-              `Conflict with critical project`,
-              `Burnout risk reduced ${oldRisk}% → ${newRisk}%`
-            ],
-            confidence: conf
-          });
-          
-          set(s => ({
-            deadlinesPrevented: s.deadlinesPrevented + 2,
-            hoursSaved: s.hoursSaved + 3,
-            workloadOptimized: s.workloadOptimized + 180,
-            aiDecisionsExecuted: s.aiDecisionsExecuted + 1
-          }));
-          
-          get().addAIActionHistory('Created Focus Session', {
-            reason: ["Mandatory recovery period needed"],
-            confidence: 88
-          });
-        }, 500);
-        
-        return { 
-          tasks: updatedTasks,
-          deadlinesPrevented: state.deadlinesPrevented + 2,
-          hoursSaved: state.hoursSaved + 5.5,
-          workloadOptimized: state.workloadOptimized + 14
-        };
-      }),
-      
+        });
+      },
       // --- Schedule Actions ---
       addEvent: (event) => set((state) => ({ events: [...state.events, event] })),
       updateEvent: (id, updates) => set((state) => ({

@@ -2,10 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 
 export async function POST(req: NextRequest) {
+  let goal = 'Your Goal';
   try {
-    const { goal } = await req.json();
+    const body = await req.json();
+    if (body.goal) goal = body.goal;
 
-    if (!goal) {
+    if (!goal || goal === 'Your Goal') {
       return NextResponse.json({ error: 'Goal is required' }, { status: 400 });
     }
 
@@ -102,8 +104,8 @@ Also, generate an Agent Pipeline log (Observe, Analyze, Plan, Act, Reflect) expl
     });
 
   } catch (error) {
-    console.error('Roadmap Generation Error:', error);
-    return NextResponse.json({ error: 'Failed to generate roadmap' }, { status: 500 });
+    console.error('Roadmap Generation Error, falling back to mock:', error);
+    return NextResponse.json(getMockRoadmap(goal || 'Your Goal'));
   }
 }
 

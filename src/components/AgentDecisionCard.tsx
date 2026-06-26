@@ -1,6 +1,7 @@
 import React from 'react';
 import { AgentDecision } from '@/types';
 import { BrainCircuit, CheckCircle2, ChevronRight } from 'lucide-react';
+import { useStore } from '@/store/useStore';
 import './AgentDecisionCard.css';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
 }
 
 export default function AgentDecisionCard({ decision }: Props) {
+  const { executeDecision, dismissDecision } = useStore();
+
   return (
     <div className="agent-decision-card glass-card">
       <div className="adc-header">
@@ -50,6 +53,30 @@ export default function AgentDecisionCard({ decision }: Props) {
                 <li key={i}>{r}</li>
               ))}
             </ul>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+            {decision.status === 'pending' || !decision.status ? (
+              <>
+                <button 
+                  className="btn-primary" 
+                  style={{ flex: 1, padding: '0.5rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', background: 'var(--accent-primary)', border: 'none', color: 'white', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                  onClick={() => executeDecision(decision.id)}
+                >
+                  Execute Action
+                </button>
+                <button 
+                  className="btn-secondary"
+                  style={{ flex: 1, padding: '0.5rem', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-glass)', color: 'var(--text-secondary)', borderRadius: '6px', cursor: 'pointer' }}
+                  onClick={() => dismissDecision(decision.id)}
+                >
+                  Dismiss
+                </button>
+              </>
+            ) : decision.status === 'executed' ? (
+              <div style={{ width: '100%', textAlign: 'center', color: 'var(--success)', fontSize: '0.85rem', fontWeight: 'bold', padding: '0.5rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px' }}>✓ Action Executed</div>
+            ) : (
+              <div style={{ width: '100%', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 'bold', padding: '0.5rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '6px' }}>✕ Action Dismissed</div>
+            )}
           </div>
         </div>
 

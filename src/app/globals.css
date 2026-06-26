@@ -276,6 +276,17 @@
 
 /* Default Fallbacks */
 :root {
+  --bg-base: #0b0f19;
+  --bg-surface: rgba(30, 41, 59, 0.4);
+  --bg-glass: rgba(15, 23, 42, 0.5);
+  --border-glass: rgba(255, 255, 255, 0.05);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #6366f1;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  
   --danger: #ef4444;
   --warning: #f59e0b;
   --success: #10b981;
@@ -350,6 +361,8 @@ button {
   padding: 1.5rem;
   max-width: 1488px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 1024px) {
@@ -357,6 +370,11 @@ button {
     grid-template-columns: 1fr;
     padding: 1rem;
   }
+}
+
+.main-content {
+  min-width: 0;
+  width: 100%;
 }
 
 /* Typography */

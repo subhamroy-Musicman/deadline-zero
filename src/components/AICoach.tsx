@@ -35,6 +35,20 @@ export default function AICoach({ messages, isThinking }: AICoachProps) {
     }
   };
 
+  const { historicalCompletionRate, focusStreak, completedTaskDates, tasks } = useStore();
+
+  let aiInsight = "Analyzing your work patterns...";
+  if (focusStreak >= 2) {
+    aiInsight = `Peak productivity detected: You are currently on a ${focusStreak}-session focus streak!`;
+  } else if (historicalCompletionRate > 80 && completedTaskDates.length > 0) {
+    aiInsight = `High reliability: You have an exceptional ${Math.round(historicalCompletionRate)}% historical task completion rate.`;
+  } else if (completedTaskDates.length >= 3) {
+    aiInsight = "Momentum building: You've been consistently completing tasks recently.";
+  } else if (tasks.length > 0) {
+    const pendingCount = tasks.filter(t => t.status !== 'completed').length;
+    aiInsight = `Monitoring ${pendingCount} active tasks. I will alert you if your burnout risk increases.`;
+  }
+
   return (
     <div className="ai-coach-panel glass-panel">
       <div className="coach-header">
@@ -47,16 +61,17 @@ export default function AICoach({ messages, isThinking }: AICoachProps) {
         </div>
       </div>
 
-      <div className="agent-memory-box" style={{ background: 'rgba(139, 92, 246, 0.1)', padding: '0.75rem', margin: '0 1rem', borderRadius: '6px', borderLeft: '3px solid var(--accent-primary)', fontSize: '0.85rem' }}>
-        <strong style={{ color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginBottom: '0.25rem' }}>
-          <BrainCircuit size={14} /> AI Learned:
-        </strong>
-        <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
-          {useStore.getState().agentMemory?.focusPatterns?.[0] || "You complete most work between 8PM–11PM."}
-        </p>
-      </div>
-
       <div className="coach-messages">
+        <div className="coach-message-card" style={{ borderLeftColor: 'var(--accent-primary)' }}>
+          <div className="msg-icon">
+            <BrainCircuit size={18} className="text-accent" style={{ color: 'var(--accent-primary)' }} />
+          </div>
+          <div className="msg-content">
+            <p style={{ fontWeight: 'bold', color: 'var(--accent-primary)', marginBottom: '0.25rem' }}>AI Learned:</p>
+            <p style={{ whiteSpace: 'pre-wrap' }}>{aiInsight}</p>
+            <span className="msg-time">Live</span>
+          </div>
+        </div>
         <AnimatePresence>
           {messages.length === 0 && !isThinking && (
             <motion.div 

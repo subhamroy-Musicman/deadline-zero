@@ -21,12 +21,6 @@ const THEMES: { id: Theme; label: string; color: string }[] = [
 export default function ThemeSelector() {
   const { theme, mode, setTheme, setMode } = useStore();
 
-  // Apply theme to document on change
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    document.documentElement.setAttribute('data-mode', mode);
-  }, [theme, mode]);
-
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
     toast.success(`Theme changed to ${newTheme}`, {

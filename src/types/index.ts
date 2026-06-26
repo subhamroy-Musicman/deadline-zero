@@ -39,6 +39,9 @@ export interface AgentDecision {
   expectedOutcome: string;
   confidence: number;
   impactScore: string;
+  status?: "pending" | "executed" | "dismissed";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  actionPayload?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   metricsBefore?: Record<string, any>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

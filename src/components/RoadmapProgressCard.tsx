@@ -57,6 +57,7 @@ export default function RoadmapProgressCard() {
       </div>
 
       <button className="roadmap-reset-btn" onClick={() => {
+        setActiveRoadmap(null);
         document.querySelector<HTMLInputElement>('.task-input')?.focus();
       }}>
         <RefreshCw size={14} /> Generate New Roadmap

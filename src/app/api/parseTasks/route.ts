@@ -20,6 +20,8 @@ export async function POST(req: Request) {
       Your job is to analyze the user's input, extract tasks, assign deadlines, calculate urgency scores (1-100), and break down complex tasks.
       Current Date/Time is: ${now}.
       
+      CRITICAL RULE: If the user inputs a paragraph containing multiple distinct goals or tasks, you MUST parse them into SEPARATE objects in the newTasks array. DO NOT combine them into a single giant task. Evaluate each task independently for high risk, high priority, etc.
+      
       Respond with JSON matching the provided schema.
       If the user's input is extremely vague or lacks actionable details, generate a 'clarification' coachMessage asking for more details, and return an empty newTasks array.
       If it's actionable, create the tasks and provide an 'encouragement', 'suggestion', or 'warning' coachMessage based on the context.

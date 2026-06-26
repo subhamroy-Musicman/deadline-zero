@@ -46,6 +46,25 @@
   margin-bottom: 1.5rem;
 }
 
+.action-button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Responsive Layout Fixes */
+@media (max-width: 1200px) {
+  .page-layout {
+    flex-direction: column;
+  }
+  .right-sidebar {
+    width: 100%;
+    margin-top: 2rem;
+  }
+  .main-feed {
+    max-width: 100%;
+  }
+}
+
 .section-header h3 {
   font-size: 1.25rem;
   color: var(--text-primary);
