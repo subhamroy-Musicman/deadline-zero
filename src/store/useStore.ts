@@ -219,7 +219,12 @@ export const useStore = create<AppState>()(
              burnoutFactors: [],
              agentLogs: [{ id: Date.now().toString(), timestamp: new Date().toISOString(), stage: 'Observe', message: `Welcome! AI Coach initialized and ready to adapt to your workflow.` }],
              decisionHistory: [],
-             aiActionHistory: []
+             aiActionHistory: [],
+             habits: [
+               { id: 'h1', title: 'Deep Work (90m)', streak: 0, lastCompleted: null },
+               { id: 'h2', title: 'Plan Tomorrow', streak: 0, lastCompleted: null },
+               { id: 'h3', title: 'Clear Inbox', streak: 0, lastCompleted: null }
+             ]
           });
           setTimeout(() => get().calculateMetrics(), 100);
         } else {
@@ -383,7 +388,12 @@ export const useStore = create<AppState>()(
         hoursSaved: 0,
         workloadOptimized: 0,
         aiDecisionsExecuted: 0,
-        aiExecutionResult: null
+        aiExecutionResult: null,
+        habits: [
+          { id: 'h1', title: 'Deep Work (90m)', streak: 0, lastCompleted: null },
+          { id: 'h2', title: 'Plan Tomorrow', streak: 0, lastCompleted: null },
+          { id: 'h3', title: 'Clear Inbox', streak: 0, lastCompleted: null }
+        ]
       }),
       
       addAIActionHistory: (desc, options) => set((state) => {
@@ -707,7 +717,7 @@ export const useStore = create<AppState>()(
       }
     }),
     {
-      name: 'deadline-zero-storage-v2',
+      name: 'deadline-zero-storage-v3',
       onRehydrateStorage: () => (state) => {
         if (state) {
           document.documentElement.dataset.theme = state.theme;
