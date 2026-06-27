@@ -3,6 +3,7 @@ import "./globals.css";
 import React from "react";
 import Sidebar from "@/components/Sidebar";
 import ParticlesBackground from "@/components/ParticlesBackground";
+import FloatingCurves from "@/components/FloatingCurves";
 import CommandPalette from "@/components/CommandPalette";
 import AlarmManager from "@/components/AlarmManager";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -62,6 +63,7 @@ export default function RootLayout({
       <body suppressHydrationWarning>
         <ThemeProvider />
         <ParticlesBackground />
+        <FloatingCurves />
         <div className="app-container" suppressHydrationWarning>
           <Sidebar />
           <main className="main-content">
