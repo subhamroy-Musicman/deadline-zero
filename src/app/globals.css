@@ -303,10 +303,53 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   transition: background-color 0.4s ease, color 0.4s ease;
-  background-image: 
-    radial-gradient(circle at 15% 50%, var(--accent-glow), transparent 30%),
-    radial-gradient(circle at 85% 30%, var(--accent-glow), transparent 30%);
   background-attachment: fixed;
+}
+
+/* 3D Animated Perspective Floor Grid */
+body::before {
+  content: "";
+  position: fixed;
+  top: 30%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    linear-gradient(var(--accent-glow) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent-glow) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: 0 0;
+  transform: perspective(600px) rotateX(75deg);
+  transform-origin: top center;
+  animation: gridMove 4s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 30%, transparent 90%);
+  mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,1) 30%, transparent 90%);
+}
+
+@keyframes gridMove {
+  0% { transform: perspective(600px) rotateX(75deg) translateY(0); }
+  100% { transform: perspective(600px) rotateX(75deg) translateY(80px); }
+}
+
+/* Floating Ambient Glows */
+body::after {
+  content: "";
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  z-index: -2;
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 35% 60%, var(--accent-glow), transparent 30%),
+    radial-gradient(circle at 65% 40%, var(--accent-glow), transparent 30%);
+  animation: ambientFloat 15s ease-in-out infinite alternate;
+}
+
+@keyframes ambientFloat {
+  0% { transform: scale(1) translate(0, 0) rotate(0deg); opacity: 0.6; }
+  100% { transform: scale(1.1) translate(30px, -40px) rotate(5deg); opacity: 1; }
 }
 
 a {
