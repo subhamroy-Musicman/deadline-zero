@@ -352,6 +352,54 @@ body::after {
   100% { transform: scale(1.1) translate(30px, -40px) rotate(5deg); opacity: 1; }
 }
 
+/* 3D Animated Perspective Ceiling Grid (Tunnel Effect) */
+html::before {
+  content: "";
+  position: fixed;
+  bottom: 70%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: 
+    linear-gradient(var(--accent-glow) 1px, transparent 1px),
+    linear-gradient(90deg, var(--accent-glow) 1px, transparent 1px);
+  background-size: 80px 80px;
+  background-position: 0 0;
+  transform: perspective(600px) rotateX(-75deg);
+  transform-origin: bottom center;
+  animation: gridMoveCeiling 4s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, rgba(0,0,0,1) 30%, transparent 90%);
+  mask-image: linear-gradient(to top, transparent 0%, rgba(0,0,0,1) 30%, transparent 90%);
+}
+
+@keyframes gridMoveCeiling {
+  0% { transform: perspective(600px) rotateX(-75deg) translateY(0); }
+  100% { transform: perspective(600px) rotateX(-75deg) translateY(-80px); }
+}
+
+/* Holographic CRT Scanlines & Vignette Overlay */
+html::after {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  background: 
+    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1)),
+    radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.5) 120%);
+  background-size: 100% 4px, 100% 100%;
+  animation: scanlinesMove 15s linear infinite;
+}
+
+@keyframes scanlinesMove {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 100px, 0 0; }
+}
+
 a {
   color: inherit;
   text-decoration: none;
