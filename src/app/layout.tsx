@@ -4,6 +4,7 @@ import React from "react";
 import Sidebar from "@/components/Sidebar";
 import ParticlesBackground from "@/components/ParticlesBackground";
 import CursorSparkle from "@/components/CursorSparkle";
+import BouncingBall from "@/components/BouncingBall";
 import CommandPalette from "@/components/CommandPalette";
 import AlarmManager from "@/components/AlarmManager";
 import ThemeProvider from "@/components/ThemeProvider";
@@ -64,6 +65,7 @@ export default function RootLayout({
         <ThemeProvider />
         <ParticlesBackground />
         <CursorSparkle />
+        <BouncingBall />
         <div className="app-container" suppressHydrationWarning>
           <Sidebar />
           <main className="main-content">

@@ -1,0 +1,64 @@
+[debug] [2026-06-27T19:42:04.855Z] ----------------------------------------------------------------------
+[debug] [2026-06-27T19:42:04.861Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\SUBHAM ROY\AppData\Local\npm-cache\_npx\7750544ccf494d8b\node_modules\firebase-tools\lib\bin\firebase.js deploy --only hosting
+[debug] [2026-06-27T19:42:04.862Z] CLI Version:   15.22.3
+[debug] [2026-06-27T19:42:04.862Z] Platform:      win32
+[debug] [2026-06-27T19:42:04.862Z] Node Version:  v24.14.0
+[debug] [2026-06-27T19:42:04.862Z] Detected Agent: antigravity
+[debug] [2026-06-27T19:42:04.863Z] Time:          Sun Jun 28 2026 01:12:04 GMT+0530 (India Standard Time)
+[debug] [2026-06-27T19:42:04.863Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-27T19:42:12.455Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-27T19:42:12.455Z] > authorizing via signed-in user (subhamroy5709@gmail.com)
+[debug] [2026-06-27T19:42:12.456Z] [iam] checking project deadline-zero for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2026-06-27T19:42:12.463Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:12.463Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:12.464Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/deadline-zero:testIamPermissions [none]
+[debug] [2026-06-27T19:42:12.464Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/deadline-zero:testIamPermissions  x-goog-user-project=deadline-zero
+[debug] [2026-06-27T19:42:12.464Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/deadline-zero:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-27T19:42:14.030Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/deadline-zero:testIamPermissions 200
+[debug] [2026-06-27T19:42:14.031Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/deadline-zero:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2026-06-27T19:42:14.032Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:14.033Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:14.034Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/deadline-zero [none]
+[debug] [2026-06-27T19:42:14.555Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/deadline-zero 200
+[debug] [2026-06-27T19:42:14.555Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/deadline-zero {"projectId":"deadline-zero","projectNumber":"813889981709","displayName":"deadline-zero","name":"projects/deadline-zero","resources":{"hostingSite":"deadline-zero"},"state":"ACTIVE","etag":"1_08393fdd-19fd-4ade-a5dc-7f750c2be6cf"}
+[debug] [2026-06-27T19:42:26.247Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:26.247Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:26.248Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites pageToken=&pageSize=10
+[debug] [2026-06-27T19:42:27.770Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites 200
+[debug] [2026-06-27T19:42:27.771Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites {"sites":[{"name":"projects/deadline-zero/sites/deadline-zero","defaultUrl":"https://deadline-zero.web.app","appId":"1:813889981709:web:c8b0f64960a3ebe1a6b444","type":"DEFAULT_SITE"}]}
+[debug] [2026-06-27T19:42:27.774Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:27.774Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:27.775Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:813889981709:web:c8b0f64960a3ebe1a6b444/config [none]
+[debug] [2026-06-27T19:42:30.119Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:813889981709:web:c8b0f64960a3ebe1a6b444/config 200
+[debug] [2026-06-27T19:42:30.120Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:813889981709:web:c8b0f64960a3ebe1a6b444/config {"projectId":"deadline-zero","appId":"1:813889981709:web:c8b0f64960a3ebe1a6b444","storageBucket":"deadline-zero.firebasestorage.app","apiKey":"AIzaSyDoT9cC42sQ90ynxub1Tb7y0RDwJA2d6Xw","authDomain":"deadline-zero.firebaseapp.com","messagingSenderId":"813889981709","measurementId":"G-V65V7K7SM7","projectNumber":"813889981709","version":"2"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 16.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2026-06-27T19:42:52.554Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:52.554Z] Checked if tokens are valid: true, expires at: 1782590597768
+[debug] [2026-06-27T19:42:52.555Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites/deadline-zero [none]
+[debug] [2026-06-27T19:42:53.826Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites/deadline-zero 200
+[debug] [2026-06-27T19:42:53.826Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/deadline-zero/sites/deadline-zero {"name":"projects/deadline-zero/sites/deadline-zero","defaultUrl":"https://deadline-zero.web.app","appId":"1:813889981709:web:c8b0f64960a3ebe1a6b444","type":"DEFAULT_SITE"}
+[info] ⨯ Another next build process is already running.
+
+[info] 
+  This could be:
+  - A next build still in progress
+  - A previous build that didn't exit cleanly
+
+[info]   Suggestion: Wait for the build to complete.
+
+[info] 
+
+[debug] [2026-06-27T19:43:18.716Z] Error: ENOENT: no such file or directory, open 'F:\my-first-project\Vibe2Ship\proacta\.next\server\middleware-manifest.json'
+[error] 
+[error] Error: An unexpected error has occurred.
