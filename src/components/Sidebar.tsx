@@ -9,6 +9,7 @@ import './Sidebar.css';
 import ThemeSelector from './ThemeSelector';
 import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -33,7 +34,11 @@ export default function Sidebar() {
   if (!mounted) return <aside className="sidebar glass-panel" style={{ opacity: 0 }}></aside>;
 
   return (
-    <aside className={`sidebar glass-panel ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+    <motion.aside 
+      layout
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className={`sidebar glass-panel ${isSidebarCollapsed ? 'collapsed' : ''}`}
+    >
       <div className="sidebar-header">
         <div className="logo-container">
           <div className="logo animate-pulse-glow" style={{ background: 'transparent', border: 'none', padding: '0' }}>
@@ -160,6 +165,6 @@ export default function Sidebar() {
           )}
         </div>
       </div>
-    </aside>
+    </motion.aside>
   );
 }

@@ -292,7 +292,18 @@ export default function Home() {
             <span className="task-count">{tasks.filter(t => t.status !== 'completed').length} active</span>
           </motion.div>
 
-          <div className="task-list">
+          <motion.div 
+            className="task-list"
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: { staggerChildren: 0.1 }
+              }
+            }}
+            initial="hidden"
+            animate="show"
+          >
             <AnimatePresence>
               {sortedTasks.length === 0 && (
                 <motion.div 
@@ -340,7 +351,7 @@ export default function Home() {
                 />
               ))}
             </AnimatePresence>
-          </div>
+          </motion.div>
         </div>
 
         <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

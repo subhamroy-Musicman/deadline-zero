@@ -67,7 +67,12 @@ export default function TasksPage() {
         </div>
       </div>
 
-      <div className="task-list">
+      <motion.div 
+        className="task-list"
+        variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
+        initial="hidden"
+        animate="show"
+      >
         <AnimatePresence>
           {filteredTasks.length === 0 ? (
             <motion.div 
@@ -89,7 +94,7 @@ export default function TasksPage() {
             ))
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
     </div>
   );
 }

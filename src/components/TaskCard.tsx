@@ -59,9 +59,12 @@ export default function TaskCard({ task, onComplete }: TaskCardProps) {
   return (
     <motion.div 
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      variants={{
+        hidden: { opacity: 0, y: 20, scale: 0.95 },
+        show: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, scale: 0.95, transition: { duration: 0.2 } }
+      }}
+      exit="exit"
       whileHover={{ scale: 1.02, translateY: -4 }}
       className={`task-card glass-card ${task.status === 'completed' ? 'completed' : ''}`}
       style={{ '--task-color': getUrgencyColor() } as React.CSSProperties}

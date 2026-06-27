@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { useStore } from '@/store/useStore';
 import { format, addHours, startOfDay, parseISO } from 'date-fns';
 import { BrainCircuit, Clock, Zap, AlertTriangle, Plus, BellRing, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { ScheduleEvent } from '@/types';
 import './schedule.css';
 
@@ -132,9 +133,18 @@ export default function SchedulePage() {
             </div>
           </div>
           
-          <div className="timeline">
+          <motion.div 
+            className="timeline"
+            variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } }}
+            initial="hidden"
+            animate="show"
+          >
             {timeline.map((block) => (
-              <div key={block.hour} className={`timeline-row ${block.events.length > 0 ? 'has-event' : ''}`}>
+              <motion.div 
+                key={block.hour} 
+                variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }}
+                className={`timeline-row ${block.events.length > 0 ? 'has-event' : ''}`}
+              >
                 <div className="time-label">{block.label}</div>
                 <div className="time-slot" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {block.events.length > 1 && (
@@ -154,9 +164,9 @@ export default function SchedulePage() {
                     <div className="free-slot"></div>
                   )}
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         <div className="schedule-sidebar">
