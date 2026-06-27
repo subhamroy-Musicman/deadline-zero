@@ -70,7 +70,7 @@ export default function CommandPalette() {
           </Command.Group>
 
           <Command.Group heading="Appearance: Theme">
-            {['cyberpunk', 'ocean', 'sunset', 'neon', 'aurora', 'synthwave', 'emerald', 'crimson', 'midnight'].map(t => (
+            {['cyberpunk', 'ocean', 'sunset', 'neon', 'aurora', 'synthwave', 'midnight'].map(t => (
               <Command.Item key={t} onSelect={() => { setTheme(t as any); setOpen(false); }}>
                 <Palette size={16} /> {t.charAt(0).toUpperCase() + t.slice(1)}
               </Command.Item>

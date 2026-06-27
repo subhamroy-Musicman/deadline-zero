@@ -95,7 +95,6 @@ export default function ParticlesBackground() {
           }
         };
       case "aurora":
-      case "emerald":
         return {
           particles: {
             number: { value: 30 },
@@ -112,7 +111,6 @@ export default function ParticlesBackground() {
           }
         };
       case "synthwave":
-      case "crimson":
       case "midnight":
         return {
           particles: {

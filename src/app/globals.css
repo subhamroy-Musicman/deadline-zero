@@ -196,57 +196,7 @@
   --accent-glow: rgba(219, 39, 119, 0.4);
 }
 
-/* --- Emerald --- */
-[data-theme="emerald"][data-mode="dark"] {
-  --bg-base: #022c22;
-  --bg-surface: rgba(6, 78, 59, 0.6);
-  --bg-glass: rgba(6, 78, 59, 0.4);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
-  --text-secondary: #6ee7b7;
-  --text-muted: #064e3b;
-  --accent-primary: #34d399;
-  --accent-secondary: #10b981;
-  --accent-glow: rgba(52, 211, 153, 0.4);
-}
-[data-theme="emerald"][data-mode="light"] {
-  --bg-base: #ecfdf5;
-  --bg-surface: rgba(255, 255, 255, 0.6);
-  --bg-glass: rgba(255, 255, 255, 0.4);
-  --border-glass: rgba(0, 100, 50, 0.08);
-  --text-primary: #064e3b;
-  --text-secondary: #059669;
-  --text-muted: #9ca3af;
-  --accent-primary: #10b981;
-  --accent-secondary: #059669;
-  --accent-glow: rgba(16, 185, 129, 0.4);
-}
 
-/* --- Crimson --- */
-[data-theme="crimson"][data-mode="dark"] {
-  --bg-base: #250000;
-  --bg-surface: rgba(70, 10, 10, 0.6);
-  --bg-glass: rgba(70, 10, 10, 0.4);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --text-primary: #ffffff;
-  --text-secondary: #fca5a5;
-  --text-muted: #7f1d1d;
-  --accent-primary: #ef4444;
-  --accent-secondary: #b91c1c;
-  --accent-glow: rgba(239, 68, 68, 0.4);
-}
-[data-theme="crimson"][data-mode="light"] {
-  --bg-base: #fef2f2;
-  --bg-surface: rgba(255, 255, 255, 0.6);
-  --bg-glass: rgba(255, 255, 255, 0.4);
-  --border-glass: rgba(200, 0, 0, 0.08);
-  --text-primary: #7f1d1d;
-  --text-secondary: #b91c1c;
-  --text-muted: #9ca3af;
-  --accent-primary: #ef4444;
-  --accent-secondary: #dc2626;
-  --accent-glow: rgba(239, 68, 68, 0.4);
-}
 
 /* --- Midnight --- */
 [data-theme="midnight"][data-mode="dark"] {
@@ -615,8 +565,7 @@ h1, h2, h3, h4 {
 [data-theme="neon"] { --bouncing-ball-color: #ffffff; }
 [data-theme="aurora"] { --bouncing-ball-color: #ffd700; }
 [data-theme="synthwave"] { --bouncing-ball-color: #ffffff; }
-[data-theme="emerald"] { --bouncing-ball-color: #ffd700; }
-[data-theme="crimson"] { --bouncing-ball-color: #ffd700; }
+
 [data-theme="midnight"] { --bouncing-ball-color: #ffffff; }
 
 /* Bouncing Ball Animation */

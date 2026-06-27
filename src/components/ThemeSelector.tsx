@@ -13,8 +13,6 @@ const THEMES: { id: Theme; label: string; color: string }[] = [
   { id: 'neon', label: 'Neon', color: '#39ff14' },
   { id: 'aurora', label: 'Aurora', color: '#10b981' },
   { id: 'synthwave', label: 'Synthwave', color: '#ff007f' },
-  { id: 'emerald', label: 'Emerald', color: '#34d399' },
-  { id: 'crimson', label: 'Crimson', color: '#ef4444' },
   { id: 'midnight', label: 'Midnight', color: '#3b82f6' },
 ];
 

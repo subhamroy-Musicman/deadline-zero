@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type Theme = 'cyberpunk' | 'ocean' | 'sunset' | 'neon' | 'aurora' | 'synthwave' | 'emerald' | 'crimson' | 'midnight';
+export type Theme = 'cyberpunk' | 'ocean' | 'sunset' | 'neon' | 'aurora' | 'synthwave' | 'midnight';
 export type Mode = 'dark' | 'light';
 
 import { AgentLog, AgentMemory, PipelineStage, Task, ScheduleEvent, AgentDecision } from '@/types';
