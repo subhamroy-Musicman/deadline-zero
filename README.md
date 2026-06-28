@@ -24,7 +24,7 @@
 </div>
 
 <div align="center">
-  <a href="https://deadline-zero.web.app"><strong>Try the Live Demo</strong></a> | <a href="#"><strong>Watch the Video Pitch</strong></a>
+  <a href="https://deadline-zero.web.app"><strong>Try the Live Demo</strong></a>
 </div>
 
 ---
