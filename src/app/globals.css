@@ -595,14 +595,14 @@ h1, h2, h3, h4 {
 
 .bouncing-ball-shadow {
   position: absolute;
-  width: 30px;
-  height: 10px;
+  width: 10px;
+  height: 30px;
   background-color: var(--bouncing-ball-color);
   border-radius: 50%;
   filter: blur(5px);
-  bottom: 0;
+  left: 0;
   animation: 
-    ballMoveX 6s linear infinite,
+    ballMoveY 6s linear infinite,
     shadowPulse 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
 }
 
@@ -613,16 +613,16 @@ h1, h2, h3, h4 {
   background-color: var(--bouncing-ball-color);
   border-radius: 50%;
   box-shadow: 0 0 20px 5px var(--bouncing-ball-color);
-  bottom: 0;
+  left: 0;
   animation: 
-    ballMoveX 6s linear infinite,
-    ballBounce 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
+    ballMoveY 6s linear infinite,
+    ballBounceX 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
 }
 
-@keyframes ballBounce {
-  0% { transform: translateY(0) scale(1.1, 0.9); }
-  10% { transform: translateY(0) scale(0.9, 1.1); }
-  100% { transform: translateY(-150px) scale(1); }
+@keyframes ballBounceX {
+  0% { transform: translateX(0) scale(0.9, 1.1); }
+  10% { transform: translateX(0) scale(1.1, 0.9); }
+  100% { transform: translateX(150px) scale(1); }
 }
 
 @keyframes shadowPulse {
@@ -630,7 +630,7 @@ h1, h2, h3, h4 {
   100% { transform: scale(0.3); opacity: 0.2; }
 }
 
-@keyframes ballMoveX {
-  0% { left: -5%; }
-  100% { left: 105%; }
+@keyframes ballMoveY {
+  0% { top: -5%; }
+  100% { top: 105%; }
 }
