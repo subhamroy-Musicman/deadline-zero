@@ -7,6 +7,7 @@ import CursorSparkle from "@/components/CursorSparkle";
 import BouncingBall from "@/components/BouncingBall";
 import CommandPalette from "@/components/CommandPalette";
 import AlarmManager from "@/components/AlarmManager";
+import Footer from "@/components/Footer";
 import ThemeProvider from "@/components/ThemeProvider";
 import { Toaster } from "sonner";
 
@@ -70,6 +71,7 @@ export default function RootLayout({
           <Sidebar />
           <main className="main-content">
             {children}
+            <Footer />
           </main>
         </div>
         <CommandPalette />
