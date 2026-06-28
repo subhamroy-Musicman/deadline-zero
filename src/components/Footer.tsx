@@ -20,7 +20,7 @@ export default function Footer() {
         Made with <span style={{ color: "#e25555" }}>❤</span> by Subham Roy
       </p>
       <p style={{ margin: 0, fontSize: "0.85rem" }}>
-        For any queries or suggestions e-mail : <a href="mailto:subhamroy5709@gmail.com" style={{ color: "var(--accent-primary)", textDecoration: "none" }}>subhamroy5709@gmail.com</a>
+        For any queries or suggestions e-mail : <a href="https://mail.google.com/mail/?view=cm&fs=1&to=subhamroy5709@gmail.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-primary)", textDecoration: "none" }}>subhamroy5709@gmail.com</a>
       </p>
     </footer>
   );
