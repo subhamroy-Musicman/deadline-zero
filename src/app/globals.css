@@ -567,10 +567,14 @@ h1, h2, h3, h4 {
 [data-theme="synthwave"] { --bouncing-ball-color: #ffffff; }
 [data-theme="midnight"] { --bouncing-ball-color: #ffffff; }
 
-/* Light Mode Override for Bouncing Ball */
-[data-theme][data-mode="light"] { 
-  --bouncing-ball-color: #1a1a1a; 
-}
+  /* Light Mode Override for Bouncing Ball */
+  [data-theme="cyberpunk"][data-mode="light"] { --bouncing-ball-color: #ff007f; } /* Hot Pink */
+  [data-theme="ocean"][data-mode="light"] { --bouncing-ball-color: #008080; } /* Teal */
+  [data-theme="sunset"][data-mode="light"] { --bouncing-ball-color: #7209b7; } /* Deep Purple */
+  [data-theme="neon"][data-mode="light"] { --bouncing-ball-color: #d90429; } /* Crimson/Red */
+  [data-theme="aurora"][data-mode="light"] { --bouncing-ball-color: #059669; } /* Emerald */
+  [data-theme="synthwave"][data-mode="light"] { --bouncing-ball-color: #ff1493; } /* Deep Pink */
+  [data-theme="midnight"][data-mode="light"] { --bouncing-ball-color: #3f37c9; } /* Indigo */
 
 /* Bouncing Ball Animation */
 .bouncing-ball-container {
