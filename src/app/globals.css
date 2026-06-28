@@ -565,8 +565,12 @@ h1, h2, h3, h4 {
 [data-theme="neon"] { --bouncing-ball-color: #ffffff; }
 [data-theme="aurora"] { --bouncing-ball-color: #ffd700; }
 [data-theme="synthwave"] { --bouncing-ball-color: #ffffff; }
-
 [data-theme="midnight"] { --bouncing-ball-color: #ffffff; }
+
+/* Light Mode Override for Bouncing Ball */
+[data-theme][data-mode="light"] { 
+  --bouncing-ball-color: #1a1a1a; 
+}
 
 /* Bouncing Ball Animation */
 .bouncing-ball-container {
