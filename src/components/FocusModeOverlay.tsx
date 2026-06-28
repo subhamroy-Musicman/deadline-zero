@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@/store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Square, CheckCircle2, Clock } from 'lucide-react';
+import { Play, Square, CheckCircle2, Clock, Music } from 'lucide-react';
 import './FocusModeOverlay.css';
 import confetti from 'canvas-confetti';
 
@@ -109,6 +109,13 @@ export default function FocusModeOverlay({ tasks, onCompleteTask }: Props) {
             </button>
             <button className="focus-btn secondary" onClick={() => setIsRunning(!isRunning)}>
               {isRunning ? <><Square size={16} /> Pause</> : <><Play size={16} /> Resume</>}
+            </button>
+            <button 
+              className="focus-btn secondary" 
+              onClick={() => window.open('https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ', '_blank', 'noopener,noreferrer')}
+              style={{ backgroundColor: '#1DB954', color: '#fff', borderColor: '#1DB954' }}
+            >
+              <Music size={16} /> Focus Playlist
             </button>
             <button className="focus-btn danger" onClick={handleEndEarly}>
               End Early

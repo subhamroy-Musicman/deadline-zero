@@ -416,25 +416,20 @@ export const useStore = create<AppState>()(
       })),
       clearAgentLogs: () => set({ agentLogs: [] }),
 
-      startFocusSession: (taskId, durationMin) => {
-        if (typeof window !== 'undefined') {
-          window.open('https://open.spotify.com/playlist/37i9dQZF1DWZeKCadgRdKQ', '_blank', 'noopener,noreferrer');
+      startFocusSession: (taskId, durationMin) => set((state) => {
+        // Auto Habit: Deep Work
+        let habits = state.habits;
+        if (durationMin >= 60) {
+          habits = habits.map(h => h.id === 'h1' ? { ...h, streak: h.streak + 1, lastCompleted: new Date().toISOString(), source: `Focus Session ${durationMin}m` } : h);
         }
-        set((state) => {
-          // Auto Habit: Deep Work
-          let habits = state.habits;
-          if (durationMin >= 60) {
-            habits = habits.map(h => h.id === 'h1' ? { ...h, streak: h.streak + 1, lastCompleted: new Date().toISOString(), source: `Focus Session ${durationMin}m` } : h);
-          }
-          return {
-            activeFocusTaskId: taskId,
-            focusTimeRemaining: durationMin * 60,
-            habits,
-            hoursSaved: state.hoursSaved + (durationMin / 60),
-            aiDecisionsExecuted: state.aiDecisionsExecuted + 1
-          };
-        });
-      },
+        return {
+          activeFocusTaskId: taskId,
+          focusTimeRemaining: durationMin * 60,
+          habits,
+          hoursSaved: state.hoursSaved + (durationMin / 60),
+          aiDecisionsExecuted: state.aiDecisionsExecuted + 1
+        };
+      }),
       
       endFocusSession: () => set({
         activeFocusTaskId: null,
